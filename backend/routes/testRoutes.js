@@ -4,5 +4,6 @@ const { testEmail } = require('../controllers/testController');
 
 // Test email endpoint
 router.post('/email', testEmail);
+router.post('/reminder', require('../controllers/testController').testReminderEmail);
 
 module.exports = router;
