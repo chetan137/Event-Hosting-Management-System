@@ -41,15 +41,15 @@ const Navbar = () => {
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="fixed top-0 left-0 right-0 z-[100] px-4 sm:px-6 py-4 sm:py-6"
+        className="fixed top-0 left-0 right-0 z-[100] px-4 sm:px-6 py-2 sm:py-4"
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-8 py-3 sm:py-4 bg-white/5 backdrop-blur-2xl rounded-2xl sm:rounded-3xl border border-white/10 shadow-2xl">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-8 py-2 sm:py-3 bg-white/5 backdrop-blur-2xl rounded-2xl sm:rounded-3xl border border-white/10 shadow-2xl">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
             <img
               src="/logo.png"
               alt="EventSync Logo"
-              className="w-12 h-12 sm:w-16 sm:h-16 object-contain transition-transform group-hover:scale-110"
+              className="w-9 h-9 sm:w-12 sm:h-12 object-contain transition-transform group-hover:scale-110"
             />
             <span className="text-white text-lg sm:text-2xl font-bold tracking-tight">EventSync</span>
           </Link>
