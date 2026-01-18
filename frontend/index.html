@@ -1,11 +1,25 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EventSync</title>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/logo.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventSync</title>
+
+  <style>
+    .logo {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .logo:hover {
+      transform: scale(1.15);
+    }
+  </style>
+</head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

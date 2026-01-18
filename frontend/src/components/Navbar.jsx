@@ -46,9 +46,11 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-8 py-3 sm:py-4 bg-white/5 backdrop-blur-2xl rounded-2xl sm:rounded-3xl border border-white/10 shadow-2xl">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-cyan-400 to-pink-500 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110">
-              <span className="text-white font-bold text-lg sm:text-xl">E</span>
-            </div>
+            <img
+              src="/logo.png"
+              alt="EventSync Logo"
+              className="w-12 h-12 sm:w-16 sm:h-16 object-contain transition-transform group-hover:scale-110"
+            />
             <span className="text-white text-lg sm:text-2xl font-bold tracking-tight">EventSync</span>
           </Link>
 
@@ -137,9 +139,11 @@ const Navbar = () => {
                 {/* Header */}
                 <div className="flex items-center justify-between pb-4 border-b border-white/10">
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-pink-500 rounded-lg flex items-center justify-center">
-                      <span className="text-white font-bold text-xl">E</span>
-                    </div>
+                    <img
+                      src="/logo.png"
+                      alt="EventSync"
+                      className="w-8 h-8 object-contain"
+                    />
                     <span className="text-white text-xl font-bold">Menu</span>
                   </div>
                   <button

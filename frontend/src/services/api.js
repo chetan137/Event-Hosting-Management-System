@@ -3,7 +3,7 @@ import axios from 'axios';
 // Determine the base URL based on the environment
 const baseURL = import.meta.env.MODE === 'production'
   ? (import.meta.env.VITE_API_URL || 'https://event-hosting-management-system-1.onrender.com')
-  : 'http://localhost:8081'; // In development, connect to backend directly
+  : 'http://localhost:8080'; // In development, connect to backend directly
 
 // Create an Axios instance with base configuration
 const API = axios.create({

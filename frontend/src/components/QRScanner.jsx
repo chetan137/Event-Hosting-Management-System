@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
-import { Camera, Keyboard, CheckCircle, XCircle, Loader, Users } from 'lucide-react';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import { Camera, Keyboard, CheckCircle, XCircle, Loader, Users, RefreshCw } from 'lucide-react';
 import API from '../services/api';
 import FeedbackForm from './FeedbackForm';
 import '../styles/qrScanner.css';
@@ -13,148 +13,128 @@ const QRScanner = ({ eventId, eventName, onScanSuccess: onScanCallback }) => {
   const [recentScans, setRecentScans] = useState([]);
   const [showFeedback, setShowFeedback] = useState(false);
   const [lastAttendance, setLastAttendance] = useState(null);
-  const [lastScannedToken, setLastScannedToken] = useState(null); // Prevent duplicate scans
-  const [scanCooldown, setScanCooldown] = useState(false); // Debounce scans
-  
-  // Use refs to manage scanner lifecycle properly
-  const scannerRef = useRef(null);
-  const scannerInitializedRef = useRef(false);
+  const [scanCooldown, setScanCooldown] = useState(false);
+  const [cameraError, setCameraError] = useState(null);
+  const [cameras, setCameras] = useState([]);
+  const [activeCameraId, setActiveCameraId] = useState(null);
 
+  const scannerRef = useRef(null);
+  const isScanningRef = useRef(false);
+
+  // Initialize scanner on mount or mode change
   useEffect(() => {
-    if (scanMode === 'camera' && !scannerInitializedRef.current) {
-      initScanner();
+    if (scanMode === 'camera') {
+      startScanner();
+    } else {
+      stopScanner();
     }
-    
+
     return () => {
-      // Only cleanup when switching modes, not on every render
-      if (scanMode !== 'camera' && scannerRef.current) {
-        try {
-          scannerRef.current.clear();
-          scannerRef.current = null;
-          scannerInitializedRef.current = false;
-        } catch (err) {
-          console.log('Scanner cleanup error:', err);
-        }
-      }
+      stopScanner();
     };
   }, [scanMode]);
 
-  // Cleanup on unmount
   useEffect(() => {
-    return () => {
-      if (scannerRef.current) {
-        try {
-          scannerRef.current.clear();
-        } catch (err) {
-          console.log('Unmount cleanup error:', err);
-        }
+    // Get available cameras
+    Html5Qrcode.getCameras().then(devices => {
+      if (devices && devices.length) {
+        setCameras(devices);
+        // Default to back camera if available
+        const backCamera = devices.find(id => id.label.toLowerCase().includes('back'));
+        setActiveCameraId(backCamera ? backCamera.id : devices[0].id);
       }
-    };
+    }).catch(err => {
+      console.error('Error getting cameras', err);
+      setCameraError('Could not access camera. Please ensure permissions are granted.');
+    });
   }, []);
 
-  const initScanner = async () => {
+  const startScanner = async () => {
     try {
-      console.log('🔄 [INIT] Initializing scanner...');
-      
-      // Clear the container completely
-      const qrReaderElement = document.getElementById('qr-reader');
-      if (!qrReaderElement) {
-        console.error('❌ [INIT] qr-reader element not found');
+      if (isScanningRef.current) return;
+
+      setCameraError(null);
+
+      const elementId = "qr-reader-video";
+
+      // Ensure element exists
+      if (!document.getElementById(elementId)) {
+        console.warn('Scanner element not found, retrying...');
+        setTimeout(startScanner, 100);
         return;
       }
-      
-      // Remove all children
-      while (qrReaderElement.firstChild) {
-        qrReaderElement.removeChild(qrReaderElement.firstChild);
-      }
 
-      // Check if scanner already exists
-      if (scannerRef.current) {
-        try {
-          await scannerRef.current.clear();
-        } catch (e) {
-          console.log('Previous scanner cleanup:', e.message);
-        }
-        scannerRef.current = null;
-      }
+      const html5QrCode = new Html5Qrcode(elementId);
+      scannerRef.current = html5QrCode;
 
-      // Create new scanner with optimized settings
-      const html5QrcodeScanner = new Html5QrcodeScanner(
-        "qr-reader",
-        {
-          fps: 30,
-          qrbox: { width: 300, height: 300 },
-          aspectRatio: 1.0,
-          showTorchButtonIfSupported: true,
-          formatsToSupport: ['QR_CODE'],
-          disableFlip: false,
-          rememberLastUsedCamera: true
-        },
-        false
-      );
+      const config = {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        aspectRatio: 1.0,
+        formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ]
+      };
 
-      // Render scanner
-      await html5QrcodeScanner.render(
+      await html5QrCode.start(
+        activeCameraId || { facingMode: "environment" },
+        config,
         (decodedText) => handleQRSuccess(decodedText),
-        (error) => {} // Silent error handling
+        (errorMessage) => {
+          // Ignore polling errors
+        }
       );
 
-      scannerRef.current = html5QrcodeScanner;
-      scannerInitializedRef.current = true;
-      console.log('✅ [INIT] Scanner initialized successfully');
-    } catch (error) {
-      console.error('❌ [INIT] Scanner initialization error:', error);
-      scannerInitializedRef.current = false;
+      isScanningRef.current = true;
+    } catch (err) {
+      console.error("Error starting scanner", err);
+      setCameraError('Failed to start camera. Please check permissions or try a different browser.');
+      isScanningRef.current = false;
     }
+  };
+
+  const stopScanner = async () => {
+    if (scannerRef.current && isScanningRef.current) {
+      try {
+        await scannerRef.current.stop();
+        scannerRef.current.clear();
+      } catch (err) {
+        console.error("Error stopping scanner", err);
+      }
+      isScanningRef.current = false;
+    }
+  };
+
+  const restartScanner = async () => {
+    await stopScanner();
+    await startScanner();
   };
 
   const handleQRSuccess = async (decodedText) => {
-    // Prevent duplicate scans - ignore if we just scanned the same token or still processing
-    if (decodedText === lastScannedToken || scanCooldown) {
-      console.log(`⏸️ [SCAN] Skipping duplicate or rapid scan`);
-      return;
-    }
-    
-    setLastScannedToken(decodedText);
-    setScanCooldown(true);
-    
-    // Cooldown for 2 seconds to prevent duplicate scans
-    setTimeout(() => setScanCooldown(false), 2000);
-    
-    await handleScan(decodedText);
-  };
+    if (scanCooldown) return;
 
-  const handleQRError = (error) => {
-    // Ignore scan errors (happens continuously while scanning)
+    setScanCooldown(true);
+    // Cooldown for 3 seconds
+    setTimeout(() => setScanCooldown(false), 3000);
+
+    await handleScan(decodedText);
   };
 
   const handleScan = async (token) => {
     try {
       setScanning(true);
       setResult(null);
-      console.log(`🔍 [SCAN] Processing token: ${token.substring(0, 20)}...`);
 
-      // Set timeout for API call
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      // Play beep sound
+      const beep = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU'); // Short beep
+      beep.play().catch(() => {});
 
       const { data } = await API.post('/api/attendance/scan', {
         qrToken: token
-      }, {
-        signal: controller.signal
       });
-
-      clearTimeout(timeoutId);
-      console.log(`✅ [SCAN] Success:`, data);
 
       // Play success sound
       if (data.playSound) {
         const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGWi77eefTRAMUKfj8LZjHAY4ktfyzHksBSR3x/DdkEAKFF606+uoVRQKRp/g8r5sIQUrgs7y2Yk2CBlou+3nn00QDFC');
         audio.play().catch(() => {});
-      }
-
-      if (onScanCallback) {
-        onScanCallback(data.attendance);
       }
 
       setResult({
@@ -163,22 +143,15 @@ const QRScanner = ({ eventId, eventName, onScanSuccess: onScanCallback }) => {
         data: data.attendance
       });
 
-      // Store attendance data and show feedback form
       setLastAttendance(data.attendance);
       setShowFeedback(true);
-
-      // Add to recent scans
       setRecentScans(prev => [data.attendance, ...prev.slice(0, 4)]);
 
+      if (onScanCallback) onScanCallback(data.attendance);
+
     } catch (error) {
-      console.error(`❌ [SCAN] Error:`, error.response?.data || error.message);
-      
-      let errorMessage = 'Scan failed';
-      if (error.name === 'AbortError') {
-        errorMessage = 'Scan timeout - please try again';
-      } else {
-        errorMessage = error.response?.data?.message || error.message || 'Scan failed';
-      }
+      console.error('Scan Error:', error);
+      const errorMessage = error.response?.data?.message || 'Scan failed';
 
       setResult({
         success: false,
@@ -186,7 +159,7 @@ const QRScanner = ({ eventId, eventName, onScanSuccess: onScanCallback }) => {
         data: null
       });
 
-      // Play error sound
+      // Error sound
       const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGWi77eefTRAMUKfj8LZjHAY4ktfyzHksBSR3x/DdkEAKFF606+uoVRQKRp/g8r5sIQUrgs7y2Yk2CBlou+3nn00QDFC');
       audio.play().catch(() => {});
 
@@ -239,9 +212,51 @@ const QRScanner = ({ eventId, eventName, onScanSuccess: onScanCallback }) => {
       </div>
 
       {/* Scanner Area */}
-      <div className="bg-[#1E1E1E] rounded-2xl p-4 sm:p-6 border border-white/10 overflow-hidden">
+      <div className="bg-[#1E1E1E] rounded-2xl p-4 sm:p-6 border border-white/10 overflow-hidden min-h-[400px]">
         {scanMode === 'camera' ? (
-          <div id="qr-reader" className="w-full max-h-[500px] rounded-xl overflow-hidden"></div>
+          <div className="relative">
+            {cameraError ? (
+              <div className="text-center p-8 bg-red-500/10 rounded-xl border border-red-500/30">
+                <XCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+                <p className="text-white font-semibold mb-2">Camera Error</p>
+                <p className="text-gray-400 text-sm mb-4">{cameraError}</p>
+                <button
+                  onClick={restartScanner}
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors flex items-center justify-center gap-2 mx-auto"
+                >
+                  <RefreshCw size={16} /> Try Again
+                </button>
+              </div>
+            ) : (
+              <>
+                <div id="qr-reader-video" className="w-full rounded-xl overflow-hidden bg-black"></div>
+
+                {/* Camera Selector */}
+                {cameras.length > 1 && (
+                  <div className="absolute bottom-4 left-0 right-0 flex justify-center z-10">
+                    <select
+                      value={activeCameraId}
+                      onChange={(e) => {
+                        setActiveCameraId(e.target.value);
+                        restartScanner();
+                      }}
+                      className="bg-black/60 text-white px-4 py-2 rounded-full text-sm border border-white/20 backdrop-blur-md outline-none"
+                    >
+                      {cameras.map(camera => (
+                        <option key={camera.id} value={camera.id}>
+                          {camera.label || `Camera ${camera.id.slice(0, 5)}...`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <p className="text-center text-gray-400 text-sm mt-4">
+                  Point camera at QR code to auto-scan
+                </p>
+              </>
+            )}
+          </div>
         ) : (
           <form onSubmit={handleManualScan} className="space-y-4">
             <div>
@@ -249,11 +264,10 @@ const QRScanner = ({ eventId, eventName, onScanSuccess: onScanCallback }) => {
               <textarea
                 value={manualToken}
                 onChange={(e) => setManualToken(e.target.value)}
-                placeholder="📱 Paste QR token (JWT) OR&#10;📇 Enter Attendance ID (12 characters)&#10;&#10;Example ID: ABC123DEF456"
+                placeholder="📱 Paste QR token (JWT) OR&#10;📇 Enter Attendance ID"
                 className="w-full px-4 py-3 bg-[#2a2a2a] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition-colors resize-none"
                 rows="5"
               />
-              <p className="text-xs text-gray-500 mt-2">💡 Both QR token (scan or paste) and Attendance ID (manual entry) are accepted</p>
             </div>
             <button
               type="submit"
@@ -273,7 +287,7 @@ const QRScanner = ({ eventId, eventName, onScanSuccess: onScanCallback }) => {
         )}
       </div>
 
-      {/* Result */}
+      {/* Result Display */}
       {result && (
         <div className={`p-4 sm:p-6 rounded-2xl border ${
           result.success
@@ -296,7 +310,6 @@ const QRScanner = ({ eventId, eventName, onScanSuccess: onScanCallback }) => {
                 <div className="text-sm space-y-1 mt-2">
                   <p className="text-white"><strong>Name:</strong> {result.data.userName}</p>
                   <p className="text-gray-400"><strong>Email:</strong> {result.data.userEmail}</p>
-                  <p className="text-gray-400"><strong>Time:</strong> {new Date().toLocaleTimeString()}</p>
                 </div>
               )}
             </div>
@@ -304,19 +317,19 @@ const QRScanner = ({ eventId, eventName, onScanSuccess: onScanCallback }) => {
         </div>
       )}
 
-      {/* Feedback Form - Show after successful scan */}
+      {/* Feedback Form */}
       {showFeedback && lastAttendance && (
-        <div className="space-y-4">
-          <FeedbackForm
-            eventId={eventId}
-            eventName={eventName}
-            onSubmitSuccess={() => {
-              setShowFeedback(false);
-              setLastAttendance(null);
-              setResult(null);
-            }}
-          />
-        </div>
+        <FeedbackForm
+          eventId={eventId}
+          eventName={eventName}
+          onSubmitSuccess={() => {
+            setShowFeedback(false);
+            setLastAttendance(null);
+            setResult(null);
+            // Optionally restart scanner if stopped?
+            setScanCooldown(false);
+          }}
+        />
       )}
 
       {/* Recent Scans */}

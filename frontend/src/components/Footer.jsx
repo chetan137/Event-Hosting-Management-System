@@ -10,9 +10,11 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-1 md:col-span-1">
             <Link to="/" className="flex items-center space-x-2 mb-6 pointer-events-auto inline-block">
-              <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-pink-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">E</span>
-              </div>
+              <img
+                src="/logo.png"
+                alt="EventSync"
+                className="w-12 h-12 object-contain"
+              />
               <span className="text-white text-2xl font-bold tracking-tight">EventSync</span>
             </Link>
             <p className="text-gray-500 text-sm leading-relaxed mb-6">
