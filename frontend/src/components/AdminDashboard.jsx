@@ -11,7 +11,8 @@ import {
   Plus,
   Activity,
   CheckCircle,
-  Hourglass
+  Hourglass,
+  Sparkles
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -140,13 +141,21 @@ const AdminDashboard = () => {
              <p className="text-gray-400">Manage your virtual and physical events.</p>
            </div>
 
-           <button
-             onClick={() => navigate('/admin/create')}
-             className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-400 to-purple-600 text-black font-bold shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] transition-all flex items-center gap-2"
-           >
-             <Plus size={20} /> Create Event
-           </button>
-         </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => navigate('/admin/analytics')}
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+            >
+              <Sparkles size={20} /> AI Analytics
+            </button>
+            <button
+              onClick={() => navigate('/admin/create')}
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-400 to-purple-600 text-black font-bold shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] transition-all flex items-center gap-2"
+            >
+              <Plus size={20} /> Create Event
+            </button>
+          </div>
+        </div>
 
          {loading ? (
              <div className="text-white text-center py-20">Loading events...</div>

@@ -12,6 +12,8 @@ import UserDashboard from './components/UserDashboard';
 import EventsPage from './components/EventsPage';
 import AdminScannerPage from './components/AdminScannerPage';
 import AdminEventDetails from './components/AdminEventDetails';
+import CompletedEventsAnalytics from './components/CompletedEventsAnalytics';
+import EventAnalyticsDashboard from './components/EventAnalyticsDashboard';
 import Footer from './components/Footer';
 import './styles/mobile-responsive.css';
 
@@ -33,6 +35,8 @@ function App() {
           <Route path="/admin/edit/:id" element={<CreateEvent />} />
           <Route path="/admin/events/:eventId/manage" element={<AdminEventDetails />} />
           <Route path="/admin/scanner/:eventId" element={<AdminScannerPage />} />
+          <Route path="/admin/analytics" element={<CompletedEventsAnalytics />} />
+          <Route path="/admin/analytics/:eventId" element={<EventAnalyticsDashboard />} />
         </Routes>
         <Footer />
       </div>
