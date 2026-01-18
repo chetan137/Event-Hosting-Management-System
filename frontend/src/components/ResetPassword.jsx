@@ -13,17 +13,17 @@ function ResetPassword() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      window.showToast('Passwords do not match', 'error', 2000);
       return;
     }
 
     try {
       await API.put(`/api/users/reset-password/${token}`, { password });
-      alert("Password Reset Successful ✅");
+      window.showToast('Password reset successful! ✅', 'success', 2000);
       navigate("/login");
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Invalid or Expired Token ❌");
+      window.showToast(error.response?.data?.message || 'Invalid or Expired Token', 'error', 3000);
     }
   };
 

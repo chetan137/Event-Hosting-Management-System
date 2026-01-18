@@ -10,9 +10,15 @@ const EventsPage = () => {
   const [joiningEvent, setJoiningEvent] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [userInfo, setUserInfo] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Get user info from localStorage
+    const info = localStorage.getItem('userInfo');
+    if (info) {
+      setUserInfo(JSON.parse(info));
+    }
     fetchEvents();
   }, [statusFilter]);
 
@@ -49,17 +55,30 @@ const EventsPage = () => {
   const handleJoinEvent = async (eventId) => {
     const userInfo = localStorage.getItem('userInfo');
     if (!userInfo) {
+      window.showToast('Please login first', 'info', 2000);
       navigate('/login');
       return;
     }
 
     try {
       setJoiningEvent(eventId);
-      await API.post(`/api/events/${eventId}/register`);
-      alert('Successfully registered for the event! Check your email for confirmation.');
-      fetchEvents();
+      try {
+        await API.post(`/api/events/${eventId}/register`);
+        window.showToast('Successfully registered! Welcome to the event 🎉', 'success', 2000);
+      } catch (regError) {
+        // If already registered, just proceed to event room
+        if (regError.response?.status === 400 && regError.response?.data?.message?.includes('already')) {
+          window.showToast('You are already registered. Entering event room... 🚀', 'info', 2000);
+        } else {
+          throw regError;
+        }
+      }
+      // Redirect to event detail page
+      setTimeout(() => {
+        navigate(`/events/${eventId}`);
+      }, 500);
     } catch (error) {
-      alert(error.response?.data?.message || 'Failed to register for event');
+      window.showToast(error.response?.data?.message || 'Failed to register for event', 'error', 3000);
     } finally {
       setJoiningEvent(null);
     }
@@ -72,6 +91,17 @@ const EventsPage = () => {
       completed: 'bg-gray-500/20 text-gray-400 border-gray-500/30'
     };
     return badges[status] || badges.upcoming;
+  };
+
+  const isEventEnded = (event) => {
+    const endTime = new Date(event.endDateTime);
+    return new Date() > endTime;
+  };
+
+  const isRegistrationClosed = (event) => {
+    if (!event.registrationDeadline) return false;
+    const deadline = new Date(event.registrationDeadline);
+    return new Date() > deadline;
   };
 
   if (loading) {
@@ -196,22 +226,32 @@ const EventsPage = () => {
                   {/* Join Button */}
                   <button
                     onClick={() => handleJoinEvent(event._id)}
-                    disabled={joiningEvent === event._id || event.status === 'completed' || (event.capacity && event.spotsLeft === 0)}
+                    disabled={joiningEvent === event._id || isEventEnded(event) || isRegistrationClosed(event) || (event.capacity && event.spotsLeft === 0) || userInfo?.role === 'admin'}
                     className={`w-full py-3 rounded-xl font-semibold transition-all ${
-                      joiningEvent === event._id
+                      userInfo?.role === 'admin'
+                        ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                        : isEventEnded(event)
+                        ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                        : isRegistrationClosed(event)
+                        ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                        : joiningEvent === event._id
                         ? 'bg-gray-600 cursor-not-allowed'
-                        : event.status === 'completed' || (event.capacity && event.spotsLeft === 0)
+                        : event.capacity && event.spotsLeft === 0
                         ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
                         : 'bg-gradient-to-r from-cyan-500 to-pink-500 text-white hover:shadow-lg hover:shadow-cyan-500/20'
                     }`}
                   >
-                    {joiningEvent === event._id ? (
+                    {userInfo?.role === 'admin' ? (
+                      'Admin cannot join events'
+                    ) : isEventEnded(event) ? (
+                      'Event Ended'
+                    ) : isRegistrationClosed(event) ? (
+                      'Registration Closed'
+                    ) : joiningEvent === event._id ? (
                       <span className="flex items-center justify-center gap-2">
                         <Loader className="w-4 h-4 animate-spin" />
                         Joining...
                       </span>
-                    ) : event.status === 'completed' ? (
-                      'Event Ended'
                     ) : event.capacity && event.spotsLeft === 0 ? (
                       'Event Full'
                     ) : (

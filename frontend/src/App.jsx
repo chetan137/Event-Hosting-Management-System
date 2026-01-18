@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import HeroSection from './components/HeroSection';
+import ProtectedHome from './components/ProtectedHome';
 import CreateEvent from './components/CreateEvent';
 import AdminDashboard from './components/AdminDashboard';
 import Login from './components/Login';
@@ -10,25 +10,29 @@ import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import UserDashboard from './components/UserDashboard';
 import EventsPage from './components/EventsPage';
+import EventDetailPage from './components/EventDetailPage';
 import AdminScannerPage from './components/AdminScannerPage';
 import AdminEventDetails from './components/AdminEventDetails';
 import CompletedEventsAnalytics from './components/CompletedEventsAnalytics';
 import EventAnalyticsDashboard from './components/EventAnalyticsDashboard';
 import Footer from './components/Footer';
+import Toast from './components/Toast';
 import './styles/mobile-responsive.css';
 
 function App() {
   return (
     <Router>
+      <Toast />
       <div className="min-h-screen flex flex-col selection:bg-cyan-500/30">
         <Navbar />
         <Routes>
-          <Route path="/" element={<HeroSection />} />
+          <Route path="/" element={<ProtectedHome />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/events" element={<EventsPage />} />
+          <Route path="/events/:eventId" element={<EventDetailPage />} />
           <Route path="/dashboard" element={<UserDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/create" element={<CreateEvent />} />

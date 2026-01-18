@@ -42,9 +42,10 @@ const AdminDashboard = () => {
       try {
         await API.delete(`/api/admin/events/${id}`);
         setEvents(events.filter(event => event._id !== id));
+        window.showToast('Event deleted successfully', 'success', 2000);
       } catch (err) {
         console.error(err);
-        alert('Failed to delete event');
+        window.showToast('Failed to delete event', 'error', 3000);
       }
     }
   };

@@ -1,0 +1,120 @@
+/* QR Scanner Styles - Fix for Double Rendering */
+
+#qr-reader {
+  width: 100%;
+  display: block;
+  background: #000;
+  border-radius: 1rem;
+  overflow: hidden;
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+/* Prevent any transforms that could cause duplication */
+#qr-reader * {
+  max-width: 100%;
+  width: 100%;
+}
+
+/* Fix video rendering - CRITICAL for preventing double display */
+#qr-reader video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  transform: none; /* Prevent any transforms */
+  -webkit-transform: none;
+  -moz-transform: none;
+  transform: scaleX(1) scaleY(1); /* Ensure no mirroring or flipping */
+}
+
+/* Hide canvas - only show video */
+#qr-reader canvas {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Ensure scanner status doesn't duplicate */
+.html5-qrcode-scanner {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.html5-qrcode-element {
+  width: 100%;
+  border: none !important;
+  background: transparent;
+  display: block;
+}
+
+/* Camera selector styling */
+.html5-qrcode-scanner-status-text {
+  color: #10b981 !important;
+  font-size: 14px !important;
+  margin: 10px 0 !important;
+}
+
+.html5-qrcode-scanner-status {
+  width: 100%;
+  text-align: center;
+  margin: 10px 0;
+  color: #a0aec0;
+  font-size: 14px;
+}
+
+/* Styling for buttons */
+.html5-qrcode-scanner-status button,
+.html5-qrcode-element button,
+button.html5-qrcode-element {
+  background-color: #0891b2 !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 16px !important;
+  margin: 5px !important;
+  border-radius: 0.5rem !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  display: inline-block !important;
+}
+
+.html5-qrcode-scanner-status button:hover,
+.html5-qrcode-element button:hover {
+  background-color: #0e7490 !important;
+  transform: scale(1.05) !important;
+}
+
+/* Fix aspect ratio container */
+.html5-qrcode-scan-region {
+  width: 100%;
+  position: relative;
+}
+
+/* Prevent layout shift and duplication */
+#qr-reader > * {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Prevent double video feeds */
+#qr-reader video:nth-of-type(n+2) {
+  display: none !important;
+}
+
+/* QR box styling */
+.qr-shaded-region {
+  position: relative;
+}
+
+.qr-shaded-region > div {
+  position: absolute;
+  z-index: 1;
+}
+

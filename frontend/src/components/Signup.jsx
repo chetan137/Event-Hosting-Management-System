@@ -9,6 +9,7 @@ function Register() {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -18,6 +19,7 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       // Mapping 'name' to 'fullName' as expected by backend
       const payload = {
@@ -32,16 +34,24 @@ function Register() {
       localStorage.setItem("userInfo", JSON.stringify(data));
       window.dispatchEvent(new Event('userInfoChange')); // Notify hooks
 
-      alert("Registration Successful 🎉");
-      if(data.role === 'admin') {
-          navigate('/admin');
-      } else {
-          navigate('/');
-      }
+      // Show success toast
+      window.showToast(`Welcome, ${data.fullName}! Account created successfully 🎉`, 'success', 2000);
+      
+      // Redirect after a brief delay
+      setTimeout(() => {
+        if(data.role === 'admin') {
+            navigate('/admin');
+        } else {
+            navigate('/events');  // Redirect to events page to see all available events
+        }
+      }, 500);
 
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Registration Failed ❌");
+      const errorMsg = error.response?.data?.message || "Registration failed. Please try again.";
+      window.showToast(errorMsg, 'error', 3000);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,7 +89,9 @@ function Register() {
             required
           />
 
-          <button type="submit">Register</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Creating Account..." : "Register"}
+          </button>
         </form>
 
         <div className="auth-switch">

@@ -86,13 +86,19 @@
     /* Better touch target */
 }
 
-.auth-card button:hover {
+.auth-card button:hover:not(:disabled) {
     opacity: 0.9;
     transform: translateY(-1px);
 }
 
-.auth-card button:active {
+.auth-card button:active:not(:disabled) {
     transform: translateY(0);
+}
+
+.auth-card button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
 }
 
 /* Links and Extras */

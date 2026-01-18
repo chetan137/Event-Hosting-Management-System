@@ -57,10 +57,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  console.log(`🌐 Access from mobile: http://<your-pc-ip>:${PORT}`);
 
   // Initialize event reminder service
   initEventReminderService();

@@ -5,7 +5,8 @@ const {
   getEventDetails,
   registerForEvent,
   getMyEvents,
-  cancelRegistration
+  cancelRegistration,
+  getEventAttendees
 } = require('../controllers/eventRegistrationController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -17,6 +18,7 @@ router.get('/user/my-events', protect, getMyEvents);
 
 // Public route for specific event
 router.get('/:id', getEventDetails);
+router.get('/:id/attendees', getEventAttendees);
 
 // Protected routes for registration
 router.post('/:id/register', protect, registerForEvent);

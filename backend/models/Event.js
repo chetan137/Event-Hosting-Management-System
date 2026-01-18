@@ -79,6 +79,15 @@ const eventSchema = new mongoose.Schema({
     type: Number,
     default: null // null implies unlimited
   },
+  registrationDeadline: {
+    type: Date,
+    default: function() {
+      // Default to 1 hour before event start
+      const deadline = new Date(this.startDateTime);
+      deadline.setHours(deadline.getHours() - 1);
+      return deadline;
+    }
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Admin',

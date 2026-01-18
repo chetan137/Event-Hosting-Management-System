@@ -10,10 +10,10 @@ function ForgotPassword() {
     e.preventDefault();
     try {
       await API.post("/api/users/forgot-password", { email });
-      alert("Reset link sent! Check your email (Check console for simulated link) 📧");
+      window.showToast('Reset link sent! Check your email 📧', 'success', 3000);
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Failed to send reset link ❌");
+      window.showToast(error.response?.data?.message || 'Failed to send reset link', 'error', 3000);
     }
   };
 

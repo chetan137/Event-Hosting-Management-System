@@ -68,7 +68,7 @@ const registerUser = asyncHandler(async (req, res) => {
     fullName,
     email,
     password,
-    role: req.body.role || 'user', // Basic role assignment
+    role: 'user', // Always set role to 'user' - no admin registration allowed
   });
 
   if (user) {

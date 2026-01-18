@@ -3,6 +3,9 @@ const Event = require('../models/Event');
 const EventRegistration = require('../models/EventRegistration');
 const User = require('../models/User');
 const axios = require('axios');
+const QRCode = require('qrcode');
+const jwt = require('jsonwebtoken');
+const QRCodeModel = require('../models/QRCode');
 
 // Helper function to calculate event status
 const getEventStatus = (event) => {
@@ -13,6 +16,73 @@ const getEventStatus = (event) => {
   if (now < start) return 'upcoming';
   if (now >= start && now <= end) return 'live';
   return 'completed';
+};
+
+// Helper function to generate QR code for registration
+const generateQRForRegistration = async (registration) => {
+  try {
+    // Check if QR already exists
+    let qrDoc = await QRCodeModel.findOne({
+      event: registration.event._id,
+      user: registration.user._id,
+      registration: registration._id
+    });
+
+    if (qrDoc && !qrDoc.isExpired) {
+      return qrDoc;
+    }
+
+    // Create JWT token (unique to this registration)
+    const qrToken = jwt.sign(
+      {
+        registrationId: registration._id,
+        userId: registration.user._id,
+        eventId: registration.event._id,
+        timestamp: Date.now(),
+        nonce: Math.random().toString(36).substr(2, 9)
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '30d' }
+    );
+
+    // Generate QR code image
+    const qrCodeImage = await QRCode.toDataURL(qrToken, {
+      errorCorrectionLevel: 'H',
+      type: 'image/png',
+      width: 400,
+      margin: 2
+    });
+
+    // Calculate expiry (event end time + 1 hour)
+    const expiresAt = new Date(registration.event.endDateTime);
+    expiresAt.setHours(expiresAt.getHours() + 1);
+
+    // Create or update QR code
+    if (qrDoc) {
+      qrDoc.qrToken = qrToken;
+      qrDoc.qrCodeImage = qrCodeImage;
+      qrDoc.expiresAt = expiresAt;
+      qrDoc.isUsed = false;
+      qrDoc.isExpired = false;
+      qrDoc = await qrDoc.save();
+    } else {
+      qrDoc = await QRCodeModel.create({
+        event: registration.event._id,
+        user: registration.user._id,
+        registration: registration._id,
+        qrToken,
+        qrCodeImage,
+        expiresAt,
+        isUsed: false,
+        isExpired: false
+      });
+    }
+
+    return qrDoc;
+  } catch (error) {
+    console.error('Error generating QR:', error);
+    throw error;
+  }
 };
 
 // Helper function to send email via Brevo
@@ -105,6 +175,12 @@ const getEventDetails = asyncHandler(async (req, res) => {
 // @route   POST /api/events/:id/register
 // @access  Private (User)
 const registerForEvent = asyncHandler(async (req, res) => {
+  // Check if user is an admin
+  if (req.user.role === 'admin') {
+    res.status(403);
+    throw new Error('Admins cannot register for events');
+  }
+
   const event = await Event.findById(req.params.id);
 
   if (!event) {
@@ -116,6 +192,23 @@ const registerForEvent = asyncHandler(async (req, res) => {
   if (event.visibility !== 'public') {
     res.status(403);
     throw new Error('This event is private');
+  }
+
+  // Check if event has ended
+  const now = new Date();
+  const eventEndTime = new Date(event.endDateTime);
+  if (now > eventEndTime) {
+    res.status(400);
+    throw new Error('This event has already ended. You cannot register for past events');
+  }
+
+  // Check registration deadline
+  if (event.registrationDeadline) {
+    const registrationDeadline = new Date(event.registrationDeadline);
+    if (now > registrationDeadline) {
+      res.status(400);
+      throw new Error('Registration deadline has passed. You can no longer register for this event');
+    }
   }
 
   // Check capacity
@@ -148,31 +241,64 @@ const registerForEvent = asyncHandler(async (req, res) => {
     paymentStatus: event.ticketType === 'paid' ? 'pending' : 'not_required'
   });
 
+  // Populate for email and QR generation
+  await registration.populate('user');
+  await registration.populate('event');
+  const populatedReg = registration;
+
   // Send confirmation email
   try {
+    let qrCodeHtml = '';
+    let qrImage = null;
+
+    // If auto-approved, generate QR code immediately
+    if (!event.requireApproval) {
+      try {
+        const qrDoc = await generateQRForRegistration(populatedReg);
+        qrImage = qrDoc.qrCodeImage;
+        qrCodeHtml = `
+          <div style="text-align: center; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #4f46e5;">🎟️ Your Entry QR Code:</h3>
+            <img src="${qrImage}" alt="QR Code" style="width: 250px; height: 250px; border: 3px solid #4f46e5; border-radius: 12px; padding: 10px; background: white;"/>
+            <p style="font-size: 14px; color: #6b7280; margin-top: 15px; max-width: 100%; word-wrap: break-word;">
+              <strong>📱 Important:</strong> Save this QR code or screenshot. Show it at the event entrance.
+            </p>
+            <p style="font-size: 12px; color: #ef4444; background: #fef2f2; padding: 12px; border-radius: 8px; border-left: 4px solid #ef4444;">
+              ⚠️ This QR code is unique to you. Do not share it!
+            </p>
+          </div>
+        `;
+      } catch (qrError) {
+        console.error('Error generating QR code:', qrError);
+        qrCodeHtml = '<p style="color: #6b7280; font-size: 12px;">QR code will be available in your dashboard.</p>';
+      }
+    }
+
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #4f46e5;">Event Registration Confirmation</h2>
+        <h2 style="color: #4f46e5;">✅ Event Registration Confirmation</h2>
         <p>Dear ${req.user.fullName},</p>
         <p>Thank you for registering for <strong>${event.eventName}</strong>!</p>
 
         <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin-top: 0;">Event Details:</h3>
+          <h3 style="margin-top: 0;">📅 Event Details:</h3>
           <p><strong>Event:</strong> ${event.eventName}</p>
           <p><strong>Date:</strong> ${new Date(event.startDateTime).toLocaleString()}</p>
-          <p><strong>Location:</strong> ${event.locationType === 'online' ? 'Online' : event.locationValue}</p>
-          ${event.locationType === 'online' ? `<p><strong>Link:</strong> ${event.locationValue}</p>` : ''}
-          <p><strong>Status:</strong> ${event.requireApproval ? 'Pending Approval' : 'Confirmed'}</p>
+          <p><strong>Location:</strong> ${event.locationType === 'online' ? '🌐 Online Event' : event.locationValue}</p>
+          ${event.locationType === 'online' ? `<p><strong>Link:</strong> <a href="${event.locationValue}">${event.locationValue}</a></p>` : ''}
+          <p><strong>Status:</strong> ${event.requireApproval ? '⏳ Pending Approval' : '✅ Confirmed'}</p>
         </div>
+
+        ${qrCodeHtml}
 
         <p style="color: #6b7280; font-size: 14px;">
           ${event.requireApproval
-            ? 'Your registration is pending approval. You will receive another email once approved.'
+            ? 'Your registration is pending approval. You will receive another email with your QR code once approved.'
             : 'Your registration is confirmed! We look forward to seeing you at the event.'}
         </p>
 
         <p style="color: #6b7280; font-size: 12px; margin-top: 30px;">
-          QR Code will be generated and sent to you closer to the event date.
+          You can also view your QR code anytime in your dashboard under "My Events".
         </p>
 
         <p>Best regards,<br/>EventSync Team</p>
@@ -219,6 +345,12 @@ const getMyEvents = asyncHandler(async (req, res) => {
 // @route   DELETE /api/events/:id/register
 // @access  Private (User)
 const cancelRegistration = asyncHandler(async (req, res) => {
+  // Check if user is an admin
+  if (req.user.role === 'admin') {
+    res.status(403);
+    throw new Error('Admins cannot cancel event registrations');
+  }
+
   const registration = await EventRegistration.findOne({
     event: req.params.id,
     user: req.user._id
@@ -233,10 +365,31 @@ const cancelRegistration = asyncHandler(async (req, res) => {
   res.json({ message: 'Registration cancelled successfully' });
 });
 
+// @desc    Get event attendees
+// @route   GET /api/events/:id/attendees
+// @access  Public
+const getEventAttendees = asyncHandler(async (req, res) => {
+  const registrations = await EventRegistration.find({
+    event: req.params.id,
+    status: { $in: ['approved', 'pending'] }
+  }).populate('user', 'fullName email avatar');
+
+  const attendees = registrations.map(reg => ({
+    _id: reg._id,
+    name: reg.user?.fullName || 'Anonymous',
+    email: reg.user?.email,
+    status: reg.status,
+    registeredAt: reg.createdAt
+  }));
+
+  res.json(attendees);
+});
+
 module.exports = {
   getPublicEvents,
   getEventDetails,
   registerForEvent,
   getMyEvents,
-  cancelRegistration
+  cancelRegistration,
+  getEventAttendees
 };

@@ -8,6 +8,7 @@ function Login() {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -17,6 +18,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       // Assuming backend is at /api/users/login as per previous backend setup
       const { data } = await API.post("/api/users/login", loginData);
@@ -25,18 +27,24 @@ function Login() {
       localStorage.setItem("userInfo", JSON.stringify(data));
       window.dispatchEvent(new Event('userInfoChange')); // Notify hooks
 
-      alert("Login Successful ✅");
+      // Show success toast
+      window.showToast(`Welcome back, ${data.fullName}! 👋`, 'success', 2000);
 
       // Redirect based on role
-      if(data.role === 'admin') {
-          navigate('/admin');
-      } else {
-          navigate('/'); // or user dashboard
-      }
+      setTimeout(() => {
+        if(data.role === 'admin') {
+            navigate('/admin');
+        } else {
+            navigate('/'); // or user dashboard
+        }
+      }, 500);
 
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Invalid Credentials ❌");
+      const errorMsg = error.response?.data?.message || "Invalid Credentials. Please try again.";
+      window.showToast(errorMsg, 'error', 3000);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,7 +78,9 @@ function Login() {
             <Link to="/forgot-password">Forgot password?</Link>
           </div>
 
-          <button type="submit">Login</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
         </form>
 
         <div className="auth-switch">

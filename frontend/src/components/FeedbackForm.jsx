@@ -35,7 +35,7 @@ const FeedbackForm = ({ eventId, eventName, onSubmitSuccess }) => {
       setRating(0);
       setComment('');
 
-      alert('🎉 Thank you for your feedback!');
+      window.showToast('Thank you for your feedback! 🎉', 'success', 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to submit feedback');
     } finally {

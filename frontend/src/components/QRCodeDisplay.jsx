@@ -10,17 +10,21 @@ const QRCodeDisplay = ({ registrationId, eventName }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    console.log(`📱 QRCodeDisplay mounted with registrationId: ${registrationId}`);
     fetchQRCode();
   }, [registrationId]);
 
   const fetchQRCode = async () => {
     try {
       setLoading(true);
+      console.log(`🔍 Fetching QR code for registration: ${registrationId}`);
       const { data } = await API.get(`/api/qr/registration/${registrationId}`);
+      console.log(`✅ QR code fetched:`, data);
       setQrData(data);
     } catch (err) {
+      console.error(`❌ QR fetch error:`, err.response?.status, err.response?.data);
       if (err.response?.status === 404) {
-        // QR doesn't exist yet
+        console.log(`ℹ️ QR doesn't exist yet (404)`);
         setQrData(null);
       } else {
         setError('Failed to load QR code');
@@ -36,7 +40,7 @@ const QRCodeDisplay = ({ registrationId, eventName }) => {
       setError('');
       const { data } = await API.post(`/api/qr/generate/${registrationId}`);
       setQrData(data.qrCode);
-      alert('✅ QR code generated! Check your email for a copy.');
+      window.showToast('QR code generated! Check your email 📧', 'success', 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to generate QR code');
     } finally {
@@ -153,6 +157,15 @@ const QRCodeDisplay = ({ registrationId, eventName }) => {
           level="H"
           includeMargin={true}
         />
+      </div>
+
+      {/* Attendance ID - for manual check-in if QR fails */}
+      <div className="bg-cyan-500/20 border border-cyan-500/30 rounded-xl p-3 mb-4">
+        <p className="text-cyan-400 text-xs font-semibold mb-2">📇 Manual Attendance ID</p>
+        <p className="text-white text-lg font-mono font-bold tracking-widest break-all">
+          {qrData.registration ? qrData.registration.substring(0, 12).toUpperCase() : 'N/A'}
+        </p>
+        <p className="text-gray-400 text-xs mt-2">👤 Use this ID if QR code cannot be scanned</p>
       </div>
 
       {/* Info */}

@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
+    // Suppress the strictQuery deprecation warning
+    mongoose.set('strictQuery', false);
+    
     const conn = await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,

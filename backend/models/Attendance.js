@@ -19,16 +19,21 @@ const attendanceSchema = new mongoose.Schema({
   qrCode: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'QRCode',
-    required: true
+    default: null  // Can be null if using manual Attendance ID
   },
   scannedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Admin',
-    required: true
+    default: null
   },
   scanTime: {
     type: Date,
     default: Date.now
+  },
+  scanMethod: {
+    type: String,
+    enum: ['qr_code', 'manual_id'],
+    default: 'qr_code'
   },
   scanLocation: {
     type: String,

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { Camera, Keyboard, CheckCircle, XCircle, Loader, Users } from 'lucide-react';
 import API from '../services/api';
 import FeedbackForm from './FeedbackForm';
+import '../styles/qrScanner.css';
 
 const QRScanner = ({ eventId, eventName, onScanSuccess: onScanCallback }) => {
   const [scanMode, setScanMode] = useState('camera'); // 'camera' or 'manual'
@@ -10,37 +11,116 @@ const QRScanner = ({ eventId, eventName, onScanSuccess: onScanCallback }) => {
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState(null);
   const [recentScans, setRecentScans] = useState([]);
-  const [scanner, setScanner] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [lastAttendance, setLastAttendance] = useState(null);
+  const [lastScannedToken, setLastScannedToken] = useState(null); // Prevent duplicate scans
+  const [scanCooldown, setScanCooldown] = useState(false); // Debounce scans
+  
+  // Use refs to manage scanner lifecycle properly
+  const scannerRef = useRef(null);
+  const scannerInitializedRef = useRef(false);
 
   useEffect(() => {
-    if (scanMode === 'camera') {
+    if (scanMode === 'camera' && !scannerInitializedRef.current) {
       initScanner();
     }
+    
     return () => {
-      if (scanner) {
-        scanner.clear();
+      // Only cleanup when switching modes, not on every render
+      if (scanMode !== 'camera' && scannerRef.current) {
+        try {
+          scannerRef.current.clear();
+          scannerRef.current = null;
+          scannerInitializedRef.current = false;
+        } catch (err) {
+          console.log('Scanner cleanup error:', err);
+        }
       }
     };
   }, [scanMode]);
 
-  const initScanner = () => {
-    const html5QrcodeScanner = new Html5QrcodeScanner(
-      "qr-reader",
-      {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-        aspectRatio: 1.0
-      },
-      false
-    );
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (scannerRef.current) {
+        try {
+          scannerRef.current.clear();
+        } catch (err) {
+          console.log('Unmount cleanup error:', err);
+        }
+      }
+    };
+  }, []);
 
-    html5QrcodeScanner.render(handleQRSuccess, handleQRError);
-    setScanner(html5QrcodeScanner);
+  const initScanner = async () => {
+    try {
+      console.log('🔄 [INIT] Initializing scanner...');
+      
+      // Clear the container completely
+      const qrReaderElement = document.getElementById('qr-reader');
+      if (!qrReaderElement) {
+        console.error('❌ [INIT] qr-reader element not found');
+        return;
+      }
+      
+      // Remove all children
+      while (qrReaderElement.firstChild) {
+        qrReaderElement.removeChild(qrReaderElement.firstChild);
+      }
+
+      // Check if scanner already exists
+      if (scannerRef.current) {
+        try {
+          await scannerRef.current.clear();
+        } catch (e) {
+          console.log('Previous scanner cleanup:', e.message);
+        }
+        scannerRef.current = null;
+      }
+
+      // Create new scanner with optimized settings
+      const html5QrcodeScanner = new Html5QrcodeScanner(
+        "qr-reader",
+        {
+          fps: 30,
+          qrbox: { width: 300, height: 300 },
+          aspectRatio: 1.0,
+          showTorchButtonIfSupported: true,
+          formatsToSupport: ['QR_CODE'],
+          disableFlip: false,
+          rememberLastUsedCamera: true
+        },
+        false
+      );
+
+      // Render scanner
+      await html5QrcodeScanner.render(
+        (decodedText) => handleQRSuccess(decodedText),
+        (error) => {} // Silent error handling
+      );
+
+      scannerRef.current = html5QrcodeScanner;
+      scannerInitializedRef.current = true;
+      console.log('✅ [INIT] Scanner initialized successfully');
+    } catch (error) {
+      console.error('❌ [INIT] Scanner initialization error:', error);
+      scannerInitializedRef.current = false;
+    }
   };
 
   const handleQRSuccess = async (decodedText) => {
+    // Prevent duplicate scans - ignore if we just scanned the same token or still processing
+    if (decodedText === lastScannedToken || scanCooldown) {
+      console.log(`⏸️ [SCAN] Skipping duplicate or rapid scan`);
+      return;
+    }
+    
+    setLastScannedToken(decodedText);
+    setScanCooldown(true);
+    
+    // Cooldown for 2 seconds to prevent duplicate scans
+    setTimeout(() => setScanCooldown(false), 2000);
+    
     await handleScan(decodedText);
   };
 
@@ -52,10 +132,20 @@ const QRScanner = ({ eventId, eventName, onScanSuccess: onScanCallback }) => {
     try {
       setScanning(true);
       setResult(null);
+      console.log(`🔍 [SCAN] Processing token: ${token.substring(0, 20)}...`);
+
+      // Set timeout for API call
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
       const { data } = await API.post('/api/attendance/scan', {
         qrToken: token
+      }, {
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
+      console.log(`✅ [SCAN] Success:`, data);
 
       // Play success sound
       if (data.playSound) {
@@ -81,9 +171,18 @@ const QRScanner = ({ eventId, eventName, onScanSuccess: onScanCallback }) => {
       setRecentScans(prev => [data.attendance, ...prev.slice(0, 4)]);
 
     } catch (error) {
+      console.error(`❌ [SCAN] Error:`, error.response?.data || error.message);
+      
+      let errorMessage = 'Scan failed';
+      if (error.name === 'AbortError') {
+        errorMessage = 'Scan timeout - please try again';
+      } else {
+        errorMessage = error.response?.data?.message || error.message || 'Scan failed';
+      }
+
       setResult({
         success: false,
-        message: error.response?.data?.message || 'Scan failed',
+        message: errorMessage,
         data: null
       });
 
@@ -140,20 +239,21 @@ const QRScanner = ({ eventId, eventName, onScanSuccess: onScanCallback }) => {
       </div>
 
       {/* Scanner Area */}
-      <div className="bg-[#1E1E1E] rounded-2xl p-4 sm:p-6 border border-white/10">
+      <div className="bg-[#1E1E1E] rounded-2xl p-4 sm:p-6 border border-white/10 overflow-hidden">
         {scanMode === 'camera' ? (
-          <div id="qr-reader" className="w-full"></div>
+          <div id="qr-reader" className="w-full max-h-[500px] rounded-xl overflow-hidden"></div>
         ) : (
           <form onSubmit={handleManualScan} className="space-y-4">
             <div>
-              <label className="block text-gray-400 mb-2 text-sm">Enter QR Token</label>
+              <label className="block text-gray-400 mb-2 text-sm font-semibold">Enter QR Token or Attendance ID</label>
               <textarea
                 value={manualToken}
                 onChange={(e) => setManualToken(e.target.value)}
-                placeholder="Paste QR token here..."
+                placeholder="📱 Paste QR token (JWT) OR&#10;📇 Enter Attendance ID (12 characters)&#10;&#10;Example ID: ABC123DEF456"
                 className="w-full px-4 py-3 bg-[#2a2a2a] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition-colors resize-none"
-                rows="4"
+                rows="5"
               />
+              <p className="text-xs text-gray-500 mt-2">💡 Both QR token (scan or paste) and Attendance ID (manual entry) are accepted</p>
             </div>
             <button
               type="submit"
@@ -163,10 +263,10 @@ const QRScanner = ({ eventId, eventName, onScanSuccess: onScanCallback }) => {
               {scanning ? (
                 <>
                   <Loader className="w-5 h-5 animate-spin" />
-                  Scanning...
+                  Processing...
                 </>
               ) : (
-                'Scan Token'
+                'Mark Attendance'
               )}
             </button>
           </form>

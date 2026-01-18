@@ -61,9 +61,9 @@ const AdminEventDetails = () => {
         status
       });
       fetchRegistrations(); // Refresh list
-      alert(`Registration ${status} successfully`);
+      window.showToast(`Registration ${status} successfully ✅`, 'success', 2000);
     } catch (error) {
-      alert('Failed to update status');
+      window.showToast('Failed to update status', 'error', 3000);
     }
   };
 
@@ -73,16 +73,17 @@ const AdminEventDetails = () => {
     try {
       await API.delete(`/api/admin/events/${eventId}/registrations/${registrationId}`);
       fetchRegistrations();
-      alert('User removed from event');
+      window.showToast('User removed from event ✓', 'success', 2000);
     } catch (error) {
-      alert('Failed to remove user');
+      window.showToast('Failed to remove user', 'error', 3000);
     }
   };
 
   const filteredRegistrations = registrations.filter(reg => {
     const matchesStatus = filterStatus === 'all' || reg.status === filterStatus;
-    const matchesSearch = reg.user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          reg.user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = !searchTerm || 
+                          (reg.user && reg.user.fullName && reg.user.fullName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                          (reg.user && reg.user.email && reg.user.email.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesStatus && matchesSearch;
   });
 
@@ -211,8 +212,8 @@ const AdminEventDetails = () => {
                     </tr>
                   ) : filteredRegistrations.map((reg) => (
                     <tr key={reg._id} className="hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-white font-medium">{reg.user.fullName}</td>
-                      <td className="p-4 text-gray-400">{reg.user.email}</td>
+                      <td className="p-4 text-white font-medium">{reg.user?.fullName || 'Unknown User'}</td>
+                      <td className="p-4 text-gray-400">{reg.user?.email || 'N/A'}</td>
                       <td className="p-4">
                         <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${
                           reg.status === 'approved' ? 'bg-green-500/20 text-green-400' :
@@ -270,7 +271,7 @@ const AdminEventDetails = () => {
                eventName={event.eventName}
                onScanSuccess={() => {
                  fetchStats();
-                 alert('✅ Scanned Successfully');
+                 window.showToast('User checked in successfully! ✅', 'success', 2000);
                }}
              />
           </div>
@@ -318,7 +319,7 @@ const AdminEventDetails = () => {
                             {new Date(record.scanTime).toLocaleString()}
                           </td>
                           <td className="p-4 text-gray-400 text-sm">
-                            {record.scannedBy.username || 'Admin'}
+                            {record.scannedBy?.username || record.scannedBy?.fullName || 'Admin'}
                           </td>
                         </tr>
                       ))
