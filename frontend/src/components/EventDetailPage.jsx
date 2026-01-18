@@ -27,7 +27,7 @@ const EventDetailPage = () => {
       setTimeout(() => {
         console.log(`🔄 Refreshing event details after registration...`);
         fetchEventDetails();
-      }, 500);
+      }, 1200);
     } catch (error) {
       console.error('❌ Registration error:', error);
       window.showToast(error.response?.data?.message || 'Failed to register', 'error', 3000);
@@ -84,17 +84,17 @@ const EventDetailPage = () => {
       const { data } = await API.get(`/api/events/${eventId}`);
       setEvent(data);
       console.log('✅ Event fetched:', data._id, data.eventName);
-      
+
       // Fetch user's registration for this event DIRECTLY from endpoint
       try {
         console.log(`🔍 Fetching registrations from /api/events/user/my-events...`);
         const response = await API.get('/api/events/user/my-events');
         console.log('📋 All user registrations:', response.data);
-        
+
         // Find this event
         const myEventsList = Array.isArray(response.data) ? response.data : [];
         console.log(`🔎 Looking for event ID: ${eventId} in ${myEventsList.length} registrations`);
-        
+
         let found = false;
         for (let evt of myEventsList) {
           console.log(`  - Event ID: ${evt._id}, Name: ${evt.eventName}, Status: ${evt.registrationStatus}`);
@@ -110,7 +110,7 @@ const EventDetailPage = () => {
             break;
           }
         }
-        
+
         if (!found) {
           console.log(`❌ No matching registration found for this event`);
           setUserRegistration(null);
@@ -122,7 +122,7 @@ const EventDetailPage = () => {
         }
         setUserRegistration(null);
       }
-      
+
       // Fetch attendees
       try {
         const attendeesData = await API.get(`/api/events/${eventId}/attendees`);
@@ -230,7 +230,7 @@ const EventDetailPage = () => {
             <div className="space-y-6 mb-8">
               <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
                 <h3 className="text-xl font-bold text-white mb-4">Event Details</h3>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-start gap-4">
                     <Calendar className="w-6 h-6 text-cyan-400 flex-shrink-0 mt-1" />
@@ -340,14 +340,14 @@ const EventDetailPage = () => {
                   <RefreshCw className="w-4 h-4 text-cyan-400" />
                 </button>
               </div>
-              
+
               <div className="mb-6">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-r from-cyan-400 to-pink-400 flex items-center justify-center mb-4">
                   <User className="w-8 h-8 text-white" />
                 </div>
                 <p className="text-white font-semibold">{userInfo?.fullName}</p>
                 <p className="text-gray-400 text-sm truncate">{userInfo?.email}</p>
-                
+
                 {/* Registration Status Badge */}
                 {userRegistration && (
                   <div className="mt-3">
@@ -374,13 +374,13 @@ const EventDetailPage = () => {
               {userRegistration?.status === 'approved' && userRegistration?.registrationId ? (
                 <div className="mb-6">
                   <p className="text-green-400 text-xs mb-2">✅ Your registration is APPROVED</p>
-                  <QRCodeDisplay 
-                    registrationId={userRegistration.registrationId} 
+                  <QRCodeDisplay
+                    registrationId={userRegistration.registrationId}
                     eventName={event?.eventName}
                   />
                 </div>
               ) : null}
-              
+
               {userRegistration?.status === 'pending' ? (
                 <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
                   <p className="text-yellow-400 text-sm mb-3">

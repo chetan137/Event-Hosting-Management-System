@@ -141,10 +141,10 @@ const generateQRCodePDF = async (qrToken, userName, eventName, eventDate, eventL
 const checkAndSendReminders = async () => {
   try {
     const now = new Date();
-    const reminderTime = new Date(now.getTime() + 20 * 60 * 1000); // 20 minutes from now
-    const reminderTimeEnd = new Date(now.getTime() + 21 * 60 * 1000); // 21 minutes from now
+    const reminderTime = new Date(now.getTime() + 15 * 60 * 1000); // 15 minutes from now
+    const reminderTimeEnd = new Date(now.getTime() + 16 * 60 * 1000); // 16 minutes from now
 
-    // Find events starting in 20-21 minutes
+    // Find events starting in 15-16 minutes
     const upcomingEvents = await Event.find({
       startDateTime: {
         $gte: reminderTime,
@@ -152,7 +152,7 @@ const checkAndSendReminders = async () => {
       }
     });
 
-    console.log(`[Event Reminder] Checking for events... Found ${upcomingEvents.length} events starting in 20 minutes`);
+    console.log(`[Event Reminder] Checking for events... Found ${upcomingEvents.length} events starting in 15 minutes`);
 
     for (const event of upcomingEvents) {
       // Get all approved registrations for this event
@@ -191,7 +191,7 @@ const checkAndSendReminders = async () => {
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <h2 style="color: #4f46e5;">⏰ Event Starting Soon!</h2>
               <p>Hi ${registration.user.fullName},</p>
-              <p>This is a friendly reminder that your event is starting in <strong>20 minutes</strong>!</p>
+              <p>This is a friendly reminder that your event is starting in <strong>15 minutes</strong>!</p>
 
               <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
                 <h3 style="margin-top: 0; color: #1f2937;">Event Details:</h3>
@@ -223,7 +223,7 @@ const checkAndSendReminders = async () => {
 
           await sendEmailWithAttachment(
             registration.user.email,
-            `⏰ Starting Soon: ${event.eventName} - QR Code Attached`,
+            `⏰ Starting in 15 mins: ${event.eventName} - QR Code Attached`,
             emailHtml,
             pdfBase64,
             `${event.eventName.replace(/[^a-z0-9]/gi, '_')}_QR_Code.pdf`
@@ -248,7 +248,7 @@ const initEventReminderService = () => {
     checkAndSendReminders();
   });
 
-  console.log('[Event Reminder Service] ✅ Started - Checking every minute for events starting in 20 minutes');
+  console.log('[Event Reminder Service] ✅ Started - Checking every minute for events starting in 15 minutes');
 };
 
 module.exports = { initEventReminderService };
