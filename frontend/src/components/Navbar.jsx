@@ -124,7 +124,7 @@ const Navbar = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] md:hidden"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[140] md:hidden"
             />
 
             {/* Mobile Menu */}
@@ -133,7 +133,7 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-[280px] bg-[#1E1E1E] border-l border-white/10 z-[95] md:hidden overflow-y-auto"
+              className="fixed top-0 right-0 bottom-0 w-[280px] bg-[#1E1E1E] border-l border-white/10 z-[150] md:hidden overflow-y-auto"
             >
               <div className="p-6 space-y-6">
                 {/* Header */}
