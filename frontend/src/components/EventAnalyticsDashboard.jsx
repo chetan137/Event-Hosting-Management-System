@@ -61,6 +61,7 @@ const EventAnalyticsDashboard = () => {
       setLoading(true);
       setError('');
       const { data } = await API.get(`/api/analytics/event/${eventId}`);
+      console.log('Analytics Data Received:', data);
       setAnalyticsData(data);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load analytics');
@@ -119,11 +120,11 @@ const EventAnalyticsDashboard = () => {
       {
         label: 'Number of Ratings',
         data: [
-          statistics.ratingDistribution[5],
-          statistics.ratingDistribution[4],
-          statistics.ratingDistribution[3],
-          statistics.ratingDistribution[2],
-          statistics.ratingDistribution[1]
+          statistics.ratingDistribution?.[5] || 0,
+          statistics.ratingDistribution?.[4] || 0,
+          statistics.ratingDistribution?.[3] || 0,
+          statistics.ratingDistribution?.[2] || 0,
+          statistics.ratingDistribution?.[1] || 0
         ],
         backgroundColor: [
           'rgba(34, 197, 94, 0.8)',
@@ -149,9 +150,9 @@ const EventAnalyticsDashboard = () => {
     datasets: [
       {
         data: [
-          analytics.sentimentAnalysis.positive,
-          analytics.sentimentAnalysis.neutral,
-          analytics.sentimentAnalysis.negative
+          analytics.sentimentAnalysis?.positive || 0,
+          analytics.sentimentAnalysis?.neutral || 0,
+          analytics.sentimentAnalysis?.negative || 0
         ],
         backgroundColor: [
           'rgba(34, 197, 94, 0.8)',

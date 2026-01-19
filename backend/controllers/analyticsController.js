@@ -15,15 +15,19 @@ const getEventAnalytics = asyncHandler(async (req, res) => {
     throw new Error('Event not found');
   }
 
-  // Check if event is completed
+  // Check if event is completed OR has feedback
   const now = new Date();
   const eventEnd = new Date(event.endDateTime);
-  const isCompleted = now > eventEnd;
+  const feedbackCount = await Feedback.countDocuments({ event: event._id });
+  const isCompleted = now > eventEnd || feedbackCount > 0;
 
   // Fetch all feedback for this event
+  console.log(`[Analytics] Fetching feedback for event ID: ${req.params.eventId}`);
   const feedbacks = await Feedback.find({ event: req.params.eventId })
     .populate('user', 'fullName email')
     .sort({ submittedAt: -1 });
+
+  console.log(`[Analytics] Found ${feedbacks.length} feedback items for event: ${event.eventName}`);
 
   // Calculate basic statistics
   const totalFeedbacks = feedbacks.length;
@@ -50,38 +54,44 @@ const getEventAnalytics = asyncHandler(async (req, res) => {
   if (shouldRegenerate && totalFeedbacks > 0) {
     console.log(`[Analytics] Generating AI insights for event: ${event.eventName}`);
 
-    // Get AI insights
-    const aiInsights = await geminiAIService.analyzeFeedback(feedbacks, event.eventName);
-    const topComments = geminiAIService.extractTopComments(feedbacks);
+    try {
+        // Get AI insights
+        const aiInsights = await geminiAIService.analyzeFeedback(feedbacks, event.eventName);
+        const topComments = geminiAIService.extractTopComments(feedbacks);
 
-    // Calculate sentiment counts
-    const sentimentCounts = {
-      positive: Math.round((aiInsights.sentiment.positive / 100) * totalFeedbacks),
-      neutral: Math.round((aiInsights.sentiment.neutral / 100) * totalFeedbacks),
-      negative: Math.round((aiInsights.sentiment.negative / 100) * totalFeedbacks)
-    };
+        // Calculate sentiment counts
+        const sentimentCounts = {
+          positive: Math.round((aiInsights.sentiment.positive / 100) * totalFeedbacks),
+          neutral: Math.round((aiInsights.sentiment.neutral / 100) * totalFeedbacks),
+          negative: Math.round((aiInsights.sentiment.negative / 100) * totalFeedbacks)
+        };
 
-    // Update or create analytics
-    analytics = await FeedbackAnalytics.findOneAndUpdate(
-      { event: req.params.eventId },
-      {
-        event: req.params.eventId,
-        totalFeedbacks,
-        averageRating: parseFloat(averageRating),
-        ratingDistribution,
-        sentimentAnalysis: sentimentCounts,
-        aiInsights: {
-          summary: aiInsights.summary,
-          positiveHighlights: aiInsights.positiveHighlights,
-          commonIssues: aiInsights.commonIssues,
-          recommendations: aiInsights.recommendations,
-          keyThemes: aiInsights.keyThemes
-        },
-        topComments,
-        lastAnalyzed: new Date()
-      },
-      { upsert: true, new: true }
-    );
+        // Update or create analytics
+        analytics = await FeedbackAnalytics.findOneAndUpdate(
+          { event: req.params.eventId },
+          {
+            event: req.params.eventId,
+            totalFeedbacks,
+            averageRating: parseFloat(averageRating),
+            ratingDistribution,
+            sentimentAnalysis: sentimentCounts,
+            aiInsights: {
+              summary: aiInsights.summary,
+              positiveHighlights: aiInsights.positiveHighlights,
+              commonIssues: aiInsights.commonIssues,
+              recommendations: aiInsights.recommendations,
+              keyThemes: aiInsights.keyThemes
+            },
+            topComments,
+            lastAnalyzed: new Date()
+          },
+          { upsert: true, new: true }
+        );
+    } catch (aiError) {
+        console.error('[Analytics] AI Generation Failed:', aiError.message);
+        // Continue without AI data, using existing analytics if available or defaults
+        // We do NOT want to fail the whole request just because AI failed
+    }
   }
 
   res.json({
@@ -119,20 +129,26 @@ const getEventAnalytics = asyncHandler(async (req, res) => {
   });
 });
 
-// @desc    Get list of all completed events with analytics summary
+// @desc    Get list of all completed events with analytics summary (or events with feedback)
 // @route   GET /api/analytics/completed-events
 // @access  Private (Admin)
 const getCompletedEvents = asyncHandler(async (req, res) => {
   const now = new Date();
 
-  // Find all completed events
-  const completedEvents = await Event.find({
-    endDateTime: { $lt: now }
+  // 1. Get IDs of all events that have at least one feedback
+  const eventsWithFeedback = await Feedback.distinct('event');
+
+  // 2. Find events that are EITHER completed OR have feedback
+  const events = await Event.find({
+    $or: [
+      { endDateTime: { $lt: now } },      // Event is over
+      { _id: { $in: eventsWithFeedback } } // Event has feedback (even if ongoing)
+    ]
   }).sort({ endDateTime: -1 });
 
   // Get analytics summary for each
   const eventsWithAnalytics = await Promise.all(
-    completedEvents.map(async (event) => {
+    events.map(async (event) => {
       const feedbackCount = await Feedback.countDocuments({ event: event._id });
       const analytics = await FeedbackAnalytics.findOne({ event: event._id });
 
@@ -144,7 +160,8 @@ const getCompletedEvents = asyncHandler(async (req, res) => {
         feedbackCount,
         averageRating: analytics?.averageRating || 0,
         hasAnalytics: !!analytics,
-        lastAnalyzed: analytics?.lastAnalyzed || null
+        lastAnalyzed: analytics?.lastAnalyzed || null,
+        isCompleted: event.endDateTime < now // accessible in frontend if needed
       };
     })
   );
