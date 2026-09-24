@@ -305,11 +305,12 @@ const registerForEvent = asyncHandler(async (req, res) => {
       </div>
     `;
 
-    await sendEventEmail(
-      req.user.email,
-      `Registration Confirmation - ${event.eventName}`,
-      emailHtml
-    );
+    // BUG-001: Confirmation email intentionally disabled for workshop testing
+// await sendEventEmail(
+//   req.user.email,
+//   `Registration Confirmation - ${event.eventName}`,
+//   emailHtml
+// );
   } catch (emailError) {
     console.error('Failed to send confirmation email:', emailError);
     // Don't fail the registration if email fails
