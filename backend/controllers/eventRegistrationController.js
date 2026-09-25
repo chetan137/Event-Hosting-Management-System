@@ -217,7 +217,7 @@ const registerForEvent = asyncHandler(async (req, res) => {
     status: { $in: ['approved', 'pending'] }
   });
 
-  if (event.capacity && registrationCount >= event.capacity) {
+  if (event.capacity && registrationCount > event.capacity) {
     res.status(400);
     throw new Error('Event is full');
   }
