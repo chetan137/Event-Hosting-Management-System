@@ -410,7 +410,7 @@ const EventDetailPage = () => {
                   </p>
                   <button
                     onClick={handleRegister}
-                    disabled={registering}
+                    disabled={registering || isRegistrationOpen}
                     className="w-full px-4 py-2 bg-cyan-500/30 border border-cyan-400 text-cyan-400 rounded-lg hover:bg-cyan-500/50 transition font-semibold disabled:opacity-50"
                   >
                     {registering ? 'Registering...' : 'Register Now'}
