@@ -170,7 +170,7 @@ const updateRegistrationStatus = asyncHandler(async (req, res) => {
       }
     }
 
-    const emailHtml = status === 'approved'
+    const emailHtml = status === 'rejected'
       ? `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
           <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; border-radius: 12px; text-align: center;">
