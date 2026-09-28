@@ -881,6 +881,126 @@ const DUMMY_EVENTS = [
     capacity: 70,
     statusOverride: null
   },
+  {
+    eventName: 'Indie Rock Band Live: Echoes of Sound',
+    description: 'Energetic original alt-rock guitar riffs, pounding drums, and melodic choruses from top indie charting touring artists.',
+    category: 'Music',
+    coverImage: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'team',
+    visibility: 'public',
+    startDateTime: createDate(18, 20, 0),
+    endDateTime: createDate(18, 23, 0),
+    registrationDeadline: createDate(17, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Hard Rock Cafe, St. Marks Road, Bangalore',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 599,
+    requireApproval: false,
+    capacity: 140,
+    statusOverride: null
+  },
+  {
+    eventName: 'EDM Sunsplash Festival: Beats in the Park',
+    description: 'Festival stage featuring progressive house, melodic trance, and bass music with pyrotechnics, laser visual art, and food stalls.',
+    category: 'Music',
+    coverImage: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'team',
+    visibility: 'public',
+    startDateTime: createDate(24, 16, 0),
+    endDateTime: createDate(24, 23, 0),
+    registrationDeadline: createDate(23, 22, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Manpho Convention Grounds, Hebbal, Bangalore',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 1199,
+    requireApproval: false,
+    capacity: 500,
+    statusOverride: null
+  },
+  {
+    eventName: 'Acoustic Coffeehouse Singer-Songwriter Showcase',
+    description: 'Intimate storytelling songs, fingerstyle guitarists, and harmonious vocal duos. Free artisanal filter coffee for all ticket holders.',
+    category: 'Music',
+    coverImage: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(29, 18, 0),
+    endDateTime: createDate(29, 21, 0),
+    registrationDeadline: createDate(28, 20, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Blue Tokai Cafe, Bandra West, Mumbai',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 350,
+    requireApproval: false,
+    capacity: 45,
+    statusOverride: null
+  },
+  {
+    eventName: 'Global World Music & Fusion Rhythms',
+    description: 'Mesmerizing fusion of Indian classical sitar and tabla with flamenco guitar, African percussion, and Celtic flute.',
+    category: 'Music',
+    coverImage: 'https://images.unsplash.com/photo-1520523839898-507127041a76?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(34, 19, 0),
+    endDateTime: createDate(34, 22, 0),
+    registrationDeadline: createDate(33, 20, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Kamani Auditorium, Copernicus Marg, New Delhi',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 700,
+    requireApproval: false,
+    capacity: 220,
+    statusOverride: null
+  },
+  {
+    eventName: 'Live Hip-Hop Cypher & Beatmaker Showcase',
+    description: 'Raw lyrical cyphers, turntable scratch battles, live analog synth beat production, and street fashion pop-ups.',
+    category: 'Music',
+    coverImage: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(40, 20, 0),
+    endDateTime: createDate(40, 23, 30),
+    registrationDeadline: createDate(39, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Gully Hall Studios, Dharavi, Mumbai',
+    theme: 'minimal',
+    ticketType: 'free',
+    ticketPrice: 0,
+    requireApproval: false,
+    capacity: 100,
+    statusOverride: null
+  },
+  {
+    eventName: 'Virtual Electronic Music Production Masterclass',
+    description: 'Music producer workshop: Ableton Live workflows, vocal mixing, sub-bass synthesis, sidechaining, and streaming platform master delivery.',
+    category: 'Music',
+    coverImage: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(47, 15, 0),
+    endDateTime: createDate(47, 18, 0),
+    registrationDeadline: createDate(46, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'online',
+    locationValue: 'https://zoom.us/j/music-production-lab',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 499,
+    requireApproval: false,
+    capacity: 150,
+    statusOverride: null
+  },
 
   // ==========================================
   // 6. SPORTS & FITNESS (8 events)
@@ -925,6 +1045,126 @@ const DUMMY_EVENTS = [
     capacity: 800,
     statusOverride: null
   },
+  {
+    eventName: 'Weekend Badminton Smash Tournament',
+    description: 'Singles and Doubles amateur badminton championship. Yonex shuttles, wooden indoor courts, trophies, and cash prizes for winners.',
+    category: 'Sports & Fitness',
+    coverImage: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'team',
+    visibility: 'public',
+    startDateTime: createDate(7, 9, 0),
+    endDateTime: createDate(7, 18, 0),
+    registrationDeadline: createDate(6, 18, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Decathlon Sports Arena, Sarjapur, Bangalore',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 399,
+    requireApproval: false,
+    capacity: 64,
+    statusOverride: null
+  },
+  {
+    eventName: 'High-Intensity CrossFit & Strength Bootcamp',
+    description: 'Kettlebell swings, tyre flips, battle ropes, and functional conditioning led by certified CrossFit Level-2 coaches.',
+    category: 'Sports & Fitness',
+    coverImage: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(11, 7, 0),
+    endDateTime: createDate(11, 9, 0),
+    registrationDeadline: createDate(10, 21, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Raw Strength Box, HSR Layout, Bangalore',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 250,
+    requireApproval: false,
+    capacity: 30,
+    statusOverride: null
+  },
+  {
+    eventName: 'Corporate 5-a-Side Football League',
+    description: 'Fast-paced turf football matches under floodlights. Refereed, customized jerseys, and post-game sports nutrition buffet.',
+    category: 'Sports & Fitness',
+    coverImage: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'team',
+    visibility: 'public',
+    startDateTime: createDate(17, 17, 0),
+    endDateTime: createDate(17, 22, 0),
+    registrationDeadline: createDate(16, 20, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Tiki Taka Football Turf, Kilpauk, Chennai',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 799,
+    requireApproval: false,
+    capacity: 80,
+    statusOverride: null
+  },
+  {
+    eventName: 'Sunset Beach Volleyball Cup',
+    description: 'Fun, competitive 4v4 co-ed beach volleyball tournament with ocean breeze, DJ beats, coconut water refreshments, and awards ceremony.',
+    category: 'Sports & Fitness',
+    coverImage: 'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'team',
+    visibility: 'public',
+    startDateTime: createDate(25, 16, 0),
+    endDateTime: createDate(25, 19, 30),
+    registrationDeadline: createDate(24, 21, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Miramar Beach Sports Area, Panaji, Goa',
+    theme: 'minimal',
+    ticketType: 'free',
+    ticketPrice: 0,
+    requireApproval: false,
+    capacity: 48,
+    statusOverride: null
+  },
+  {
+    eventName: 'Outdoor Nature Trek & Cardio Trail',
+    description: 'Scenic 8km guided morning hike up Nandi Hills. Learn trail navigation, wilderness safety, and enjoy panoramic summit sunrise views.',
+    category: 'Sports & Fitness',
+    coverImage: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(33, 5, 30),
+    endDateTime: createDate(33, 11, 0),
+    registrationDeadline: createDate(32, 18, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Nandi Hills Base Camp, Chikkaballapur',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 350,
+    requireApproval: false,
+    capacity: 50,
+    statusOverride: null
+  },
+  {
+    eventName: 'Sports Nutrition & Athletic Recovery Masterclass',
+    description: 'Evidence-based seminar on macro splits, endurance hydration, muscle recovery sleep hygiene, and injury prevention for athletes.',
+    category: 'Sports & Fitness',
+    coverImage: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(43, 11, 0),
+    endDateTime: createDate(43, 13, 30),
+    registrationDeadline: createDate(42, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'online',
+    locationValue: 'https://meet.google.com/athlete-nutrition',
+    theme: 'minimal',
+    ticketType: 'free',
+    ticketPrice: 0,
+    requireApproval: false,
+    capacity: 200,
+    statusOverride: null
+  },
 
   // ==========================================
   // 7. NETWORKING (8 events)
@@ -947,6 +1187,146 @@ const DUMMY_EVENTS = [
     ticketPrice: 299,
     requireApproval: false,
     capacity: 75,
+    statusOverride: null
+  },
+  {
+    eventName: 'Alumni Network Reunion & Career Connect',
+    description: 'Connect with seasoned university alumni across industries. Mentorship matchmaking, career advice, and informal dinner buffet.',
+    category: 'Networking',
+    coverImage: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(9, 18, 30),
+    endDateTime: createDate(9, 21, 30),
+    registrationDeadline: createDate(8, 20, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'University Club House, Shivaji Nagar, Pune',
+    theme: 'minimal',
+    ticketType: 'free',
+    ticketPrice: 0,
+    requireApproval: false,
+    capacity: 120,
+    statusOverride: null
+  },
+  {
+    eventName: 'Women in Tech & Leadership Coffee Mixer',
+    description: 'A welcoming space for female coders, designers, managers, and entrepreneurs to discuss career hurdles, salary negotiation, and peer support.',
+    category: 'Networking',
+    coverImage: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(16, 16, 0),
+    endDateTime: createDate(16, 18, 30),
+    registrationDeadline: createDate(15, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'FabCafe, Vasant Kunj, New Delhi',
+    theme: 'minimal',
+    ticketType: 'free',
+    ticketPrice: 0,
+    requireApproval: false,
+    capacity: 40,
+    statusOverride: null
+  },
+  {
+    eventName: 'Speed Networking for Freelancers & Creatives',
+    description: 'Meet 20 other copywriters, motion designers, developers, and photographers in 60 minutes. Find referral partners and project collaborators.',
+    category: 'Networking',
+    coverImage: 'https://images.unsplash.com/photo-1531497865144-0464ef8fb9a9?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(21, 18, 0),
+    endDateTime: createDate(21, 20, 30),
+    registrationDeadline: createDate(20, 21, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'online',
+    locationValue: 'https://zoom.us/j/speed-network-creatives',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 199,
+    requireApproval: false,
+    capacity: 50,
+    statusOverride: null
+  },
+  {
+    eventName: 'Finance, Banking & Fintech Industry Evening',
+    description: 'High-level networking for investment analysts, wealth managers, payments engineers, and fintech founders. Premium appetizers included.',
+    category: 'Networking',
+    coverImage: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'team',
+    visibility: 'public',
+    startDateTime: createDate(27, 19, 0),
+    endDateTime: createDate(27, 22, 0),
+    registrationDeadline: createDate(26, 20, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Trident Hotel Rooftop, BKC, Mumbai',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 999,
+    requireApproval: false,
+    capacity: 90,
+    statusOverride: null
+  },
+  {
+    eventName: 'Hardware Hackers & Maker Community Meetup',
+    description: 'Show and tell night for IoT builders, Arduino makers, 3D printing enthusiasts, and hardware engineers. Bring your prototypes!',
+    category: 'Networking',
+    coverImage: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(35, 15, 0),
+    endDateTime: createDate(35, 18, 0),
+    registrationDeadline: createDate(34, 20, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Makerspace Studio, Sector 44, Gurgaon',
+    theme: 'minimal',
+    ticketType: 'free',
+    ticketPrice: 0,
+    requireApproval: false,
+    capacity: 50,
+    statusOverride: null
+  },
+  {
+    eventName: 'Cross-Border Remote Workers & Expats Social',
+    description: 'Casual international meetup for digital nomads, remote workers, and expats living in India. Share tips on travel, co-working, and taxes.',
+    category: 'Networking',
+    coverImage: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(41, 18, 30),
+    endDateTime: createDate(41, 21, 30),
+    registrationDeadline: createDate(40, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Toit Brewpub, Indiranagar, Bangalore',
+    theme: 'minimal',
+    ticketType: 'free',
+    ticketPrice: 0,
+    requireApproval: false,
+    capacity: 60,
+    statusOverride: null
+  },
+  {
+    eventName: 'Global Developer Community Virtual Roundtable',
+    description: 'Connect with open-source contributors and developers across Europe, Asia, and North America. Breakout discussions on tech stacks and remote careers.',
+    category: 'Networking',
+    coverImage: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(49, 17, 0),
+    endDateTime: createDate(49, 19, 0),
+    registrationDeadline: createDate(48, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'online',
+    locationValue: 'https://meet.google.com/global-dev-roundtable',
+    theme: 'minimal',
+    ticketType: 'free',
+    ticketPrice: 0,
+    requireApproval: false,
+    capacity: 250,
     statusOverride: null
   },
 
@@ -973,6 +1353,146 @@ const DUMMY_EVENTS = [
     capacity: 50,
     statusOverride: null
   },
+  {
+    eventName: 'Typography & Editorial Poster Design Workshop',
+    description: 'Explore grid structures, pairing serif and sans-serif typefaces, hierarchy, kerning subtleties, and print poster layouts with Swiss design principles.',
+    category: 'Design',
+    coverImage: 'https://images.unsplash.com/photo-1509343256512-d77a5cb3791b?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(13, 11, 0),
+    endDateTime: createDate(13, 15, 0),
+    registrationDeadline: createDate(12, 20, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Art & Design Collective, Hauz Khas, New Delhi',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 450,
+    requireApproval: false,
+    capacity: 30,
+    statusOverride: null
+  },
+  {
+    eventName: '3D Modeling & Animation in Blender Sprint',
+    description: 'Learn hard-surface 3D modeling, procedural shading, lighting setups, physics particle simulations, and Cycles photorealistic rendering in Blender.',
+    category: 'Design',
+    coverImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'team',
+    visibility: 'public',
+    startDateTime: createDate(19, 13, 0),
+    endDateTime: createDate(19, 17, 30),
+    registrationDeadline: createDate(18, 22, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'online',
+    locationValue: 'https://zoom.us/j/blender-3d-mastery',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 499,
+    requireApproval: false,
+    capacity: 60,
+    statusOverride: null
+  },
+  {
+    eventName: 'Design Leadership & Design Ops Conference',
+    description: 'How to scale product design teams, advocate for user research at executive levels, streamline design-to-engineering handoffs, and manage design debt.',
+    category: 'Design',
+    coverImage: 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'team',
+    visibility: 'public',
+    startDateTime: createDate(28, 10, 0),
+    endDateTime: createDate(28, 16, 0),
+    registrationDeadline: createDate(27, 18, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Sheraton Grand Ballroom, Whitefield, Bangalore',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 999,
+    requireApproval: false,
+    capacity: 150,
+    statusOverride: null
+  },
+  {
+    eventName: 'Brand Identity & Visual Storytelling Workshop',
+    description: 'Craft holistic brand ecosystems: logo marks, brand guides, voice & tone, color psychology, and brand collateral packaging design.',
+    category: 'Design',
+    coverImage: 'https://images.unsplash.com/photo-1542744094-3a31f272c490?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(32, 14, 0),
+    endDateTime: createDate(32, 18, 0),
+    registrationDeadline: createDate(31, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'WeWork Forum, DLF Cyber City, Gurgaon',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 600,
+    requireApproval: false,
+    capacity: 35,
+    statusOverride: null
+  },
+  {
+    eventName: 'Mobile App Interaction & Micro-Animations Lab',
+    description: 'Designing delightful mobile micro-interactions using Principle, Protopie, and Lottie animations. Deliver buttery-smooth iOS & Android experiences.',
+    category: 'Design',
+    coverImage: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(38, 16, 0),
+    endDateTime: createDate(38, 19, 0),
+    registrationDeadline: createDate(37, 21, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'online',
+    locationValue: 'https://meet.google.com/micro-animations-lab',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 350,
+    requireApproval: false,
+    capacity: 80,
+    statusOverride: null
+  },
+  {
+    eventName: 'Generative AI Tools for Creative Designers',
+    description: 'Harness Midjourney, Stable Diffusion, Runway Gen-2, and Adobe Firefly for creative concept art, rapid moodboarding, and advertising storyboards.',
+    category: 'Design',
+    coverImage: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(44, 15, 0),
+    endDateTime: createDate(44, 18, 30),
+    registrationDeadline: createDate(43, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'online',
+    locationValue: 'https://zoom.us/j/ai-design-tools',
+    theme: 'minimal',
+    ticketType: 'free',
+    ticketPrice: 0,
+    requireApproval: false,
+    capacity: 180,
+    statusOverride: null
+  },
+  {
+    eventName: 'Portfolio Review & Creative Career Clinic',
+    description: 'Live 1-on-1 portfolio roast and constructive critique with Design Directors from Swiggy, CRED, and Microsoft. Polish your case studies.',
+    category: 'Design',
+    coverImage: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(50, 11, 0),
+    endDateTime: createDate(50, 15, 0),
+    registrationDeadline: createDate(49, 20, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Design Studio Hub, Indiranagar, Bangalore',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 299,
+    requireApproval: true,
+    capacity: 25,
+    statusOverride: null
+  },
 
   // ==========================================
   // 9. GAMING (8 events)
@@ -997,6 +1517,146 @@ const DUMMY_EVENTS = [
     capacity: 120,
     statusOverride: null
   },
+  {
+    eventName: 'BGMI & PUBG Mobile Battle Royale Invitational',
+    description: 'Solo and squad mobile gaming tournament. Erangel and Miramar showdown with spectator projection screen and live Twitch/YouTube broadcast.',
+    category: 'Gaming',
+    coverImage: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'team',
+    visibility: 'public',
+    startDateTime: createDate(11, 14, 0),
+    endDateTime: createDate(11, 21, 0),
+    registrationDeadline: createDate(10, 20, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'online',
+    locationValue: 'https://discord.gg/bgmi-championship-arena',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 199,
+    requireApproval: false,
+    capacity: 100,
+    statusOverride: null
+  },
+  {
+    eventName: 'Retro Arcade Night & Street Fighter Showdown',
+    description: 'Nostalgic gaming night with genuine arcade cabinets: Pac-Man, Tekken 3, Street Fighter II, and Mortal Kombat with retro snacks.',
+    category: 'Gaming',
+    coverImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(17, 18, 0),
+    endDateTime: createDate(17, 23, 0),
+    registrationDeadline: createDate(16, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Smaaash Entertainment Arena, Lower Parel, Mumbai',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 399,
+    requireApproval: false,
+    capacity: 80,
+    statusOverride: null
+  },
+  {
+    eventName: 'Indie Game Developers Showcase & Playtest',
+    description: 'Try unreleased indie video games made by independent game studios. Give direct developer feedback and play with fellow gamers.',
+    category: 'Gaming',
+    coverImage: 'https://images.unsplash.com/photo-1556438064-2d7646166914?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'team',
+    visibility: 'public',
+    startDateTime: createDate(22, 13, 0),
+    endDateTime: createDate(22, 18, 0),
+    registrationDeadline: createDate(21, 20, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Gaming Guild Studio, Koramangala, Bangalore',
+    theme: 'minimal',
+    ticketType: 'free',
+    ticketPrice: 0,
+    requireApproval: false,
+    capacity: 90,
+    statusOverride: null
+  },
+  {
+    eventName: 'FIFA 26 PlayStation 5 Knockout Tournament',
+    description: '1v1 UEFA Champions League rules FIFA tournament on 4K OLED screens. Winner walks away with customized PS5 controller and cash prize.',
+    category: 'Gaming',
+    coverImage: 'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(26, 12, 0),
+    endDateTime: createDate(26, 19, 0),
+    registrationDeadline: createDate(25, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'PlayStation Gaming Lounge, City Centre Mall, Hyderabad',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 299,
+    requireApproval: false,
+    capacity: 64,
+    statusOverride: null
+  },
+  {
+    eventName: 'Board Games, Catan & D&D Community Quest',
+    description: 'Unplug and play! Dungeons & Dragons one-shots for beginners, Settlers of Catan, Ticket to Ride, and Secret Hitler with game masters.',
+    category: 'Gaming',
+    coverImage: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(31, 15, 0),
+    endDateTime: createDate(31, 20, 0),
+    registrationDeadline: createDate(30, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Board Game Cafe, Bandra West, Mumbai',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 200,
+    requireApproval: false,
+    capacity: 45,
+    statusOverride: null
+  },
+  {
+    eventName: 'Game Development in Unreal Engine 5 Workshop',
+    description: 'Learn Lumen lighting, Nanite geometry, Blueprint visual scripting, and character physics in Unreal Engine 5. Build your first playable demo.',
+    category: 'Gaming',
+    coverImage: 'https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(37, 14, 0),
+    endDateTime: createDate(37, 18, 0),
+    registrationDeadline: createDate(36, 21, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'online',
+    locationValue: 'https://zoom.us/j/unreal-engine-mastery',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 499,
+    requireApproval: false,
+    capacity: 100,
+    statusOverride: null
+  },
+  {
+    eventName: 'Twitch & YouTube Gaming Streamer Bootcamp',
+    description: 'OBS Studio setup, custom stream overlays, building Discord communities, viewer engagement monetization, and sponsor pitches.',
+    category: 'Gaming',
+    coverImage: 'https://images.unsplash.com/photo-1542751110-97427bbecf20?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(45, 16, 0),
+    endDateTime: createDate(45, 19, 0),
+    registrationDeadline: createDate(44, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'online',
+    locationValue: 'https://meet.google.com/streamer-bootcamp',
+    theme: 'minimal',
+    ticketType: 'free',
+    ticketPrice: 0,
+    requireApproval: false,
+    capacity: 150,
+    statusOverride: null
+  },
 
   // ==========================================
   // 10. EDUCATION (8 events)
@@ -1019,6 +1679,146 @@ const DUMMY_EVENTS = [
     ticketPrice: 0,
     requireApproval: false,
     capacity: 250,
+    statusOverride: null
+  },
+  {
+    eventName: 'Scientific Research Methodology & Paper Publishing',
+    description: 'How to write impactful research manuscripts, conduct rigorous literature reviews, choose peer-reviewed IEEE/Springer journals, and handle reviewer rebuttals.',
+    category: 'Education',
+    coverImage: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(16, 14, 0),
+    endDateTime: createDate(16, 17, 30),
+    registrationDeadline: createDate(15, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'online',
+    locationValue: 'https://meet.google.com/research-paper-clinic',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 299,
+    requireApproval: false,
+    capacity: 120,
+    statusOverride: null
+  },
+  {
+    eventName: 'UPSC & Civil Services Strategy Conclave',
+    description: 'Preparation roadmaps from recently qualified IAS/IPS officers. General Studies syllabus breakdown, essay writing frameworks, and interview guidance.',
+    category: 'Education',
+    coverImage: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(20, 10, 0),
+    endDateTime: createDate(20, 16, 0),
+    registrationDeadline: createDate(19, 20, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Sardar Patel Memorial Auditorium, New Delhi',
+    theme: 'minimal',
+    ticketType: 'free',
+    ticketPrice: 0,
+    requireApproval: false,
+    capacity: 350,
+    statusOverride: null
+  },
+  {
+    eventName: 'Mathematics & Algorithms for Competitive Programming',
+    description: 'Deep dive into number theory, graph algorithms, dynamic programming, and combinatorics for Codeforces and ICPC competitive coding.',
+    category: 'Education',
+    coverImage: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(25, 17, 0),
+    endDateTime: createDate(25, 20, 0),
+    registrationDeadline: createDate(24, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'online',
+    locationValue: 'https://zoom.us/j/competitive-math-lab',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 199,
+    requireApproval: false,
+    capacity: 100,
+    statusOverride: null
+  },
+  {
+    eventName: 'Modern Astronomy, Cosmology & Space Sciences',
+    description: 'Stargazing with high-powered telescopes. Lectures on James Webb Space Telescope discoveries, dark matter, exoplanets, and black holes.',
+    category: 'Education',
+    coverImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(30, 19, 0),
+    endDateTime: createDate(30, 22, 30),
+    registrationDeadline: createDate(29, 20, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Jawaharlal Nehru Planetarium, Bangalore',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 350,
+    requireApproval: false,
+    capacity: 150,
+    statusOverride: null
+  },
+  {
+    eventName: 'Psychology of Human Behavior & Decision Making',
+    description: 'Explore behavioral economics, cognitive biases, persuasion science, and emotional resilience with leading university psychologists.',
+    category: 'Education',
+    coverImage: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(36, 15, 0),
+    endDateTime: createDate(36, 18, 0),
+    registrationDeadline: createDate(35, 22, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'TISS Auditorium, Deonar, Mumbai',
+    theme: 'minimal',
+    ticketType: 'paid',
+    ticketPrice: 450,
+    requireApproval: false,
+    capacity: 110,
+    statusOverride: null
+  },
+  {
+    eventName: 'Foreign Languages Fest: French, Spanish & Japanese',
+    description: 'Interactive cultural immersion! Beginner language taster workshops, native speaker conversation corners, calligraphy, and global cuisine.',
+    category: 'Education',
+    coverImage: 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(42, 11, 0),
+    endDateTime: createDate(42, 16, 0),
+    registrationDeadline: createDate(41, 18, 0),
+    timeZone: 'GMT+05:30',
+    locationType: 'offline',
+    locationValue: 'Alliance Française Cultural Center, Bangalore',
+    theme: 'minimal',
+    ticketType: 'free',
+    ticketPrice: 0,
+    requireApproval: false,
+    capacity: 130,
+    statusOverride: null
+  },
+  {
+    eventName: 'Critical Thinking, Logic & Philosophy Forum',
+    description: 'Socratic dialogue circles exploring ethics in artificial intelligence, epistemology, existential philosophy, and structured argumentation.',
+    category: 'Education',
+    coverImage: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80',
+    calendarType: 'personal',
+    visibility: 'public',
+    startDateTime: createDate(48, 16, 0),
+    endDateTime: createDate(48, 19, 0),
+    registrationDeadline: createDate(47, 23, 59),
+    timeZone: 'GMT+05:30',
+    locationType: 'online',
+    locationValue: 'https://meet.google.com/philosophy-forum',
+    theme: 'minimal',
+    ticketType: 'free',
+    ticketPrice: 0,
+    requireApproval: false,
+    capacity: 80,
     statusOverride: null
   }
 ];
@@ -1067,37 +1867,36 @@ const SOLD_OUT_EVENTS = [
   }
 ];
 
-async function seedDatabase() {
+async function seedDatabase(shouldExit = true) {
   console.log('====================================================');
   console.log('🌱 EventSync Comprehensive Events Seeder');
   console.log('====================================================');
 
-  if (!process.env.MONGO_URI) {
-    console.error('\n❌ ERROR: MONGO_URI is missing in your environment configuration!');
-    console.error('👉 Please configure MONGO_URI in your backend/.env file.');
-    process.exit(1);
-  }
+  if (mongoose.connection.readyState === 0) {
+    if (!process.env.MONGO_URI) {
+      console.error('\n❌ ERROR: MONGO_URI is missing in your environment configuration!');
+      console.error('👉 Please configure MONGO_URI in your backend/.env file.');
+      if (shouldExit) process.exit(1);
+      return;
+    }
 
-  // Check if URI is still the placeholder example
-  if (process.env.MONGO_URI.includes('cluster0.mongodb.net') || process.env.MONGO_URI.includes('<username>')) {
-    console.error('\n❌ ERROR: MONGO_URI in backend/.env is currently using the placeholder string:');
-    console.error(`   ${process.env.MONGO_URI}`);
-    console.error('\n👉 What is missing:');
-    console.error('   Please replace this placeholder with your actual MongoDB Atlas connection string');
-    console.error('   or your local MongoDB instance (e.g. mongodb://127.0.0.1:27017/event_management).\n');
-    process.exit(1);
+    try {
+      console.log('📡 Connecting to MongoDB...');
+      mongoose.set('strictQuery', false);
+      await mongoose.connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        serverSelectionTimeoutMS: 5000
+      });
+      console.log('✅ Connected to MongoDB successfully!\n');
+    } catch (connErr) {
+      console.error('\n❌ MongoDB connection failed:', connErr.message);
+      if (shouldExit) process.exit(1);
+      return;
+    }
   }
 
   try {
-    console.log('📡 Connecting to MongoDB...');
-    mongoose.set('strictQuery', false);
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000
-    });
-    console.log('✅ Connected to MongoDB successfully!\n');
-
     // Create or find a dummy seed user to populate registrations for sold-out testing
     let dummyUser = await User.findOne({ email: 'seed.tester@eventsync.dev' });
     if (!dummyUser) {
@@ -1136,9 +1935,15 @@ async function seedDatabase() {
       if (makeSoldOut && savedEvent.capacity) {
         const currentRegs = await EventRegistration.countDocuments({ event: savedEvent._id });
         for (let i = currentRegs; i < savedEvent.capacity; i++) {
+          const attendee = await User.create({
+            fullName: `Attendee ${i + 1}`,
+            email: `attendee_${savedEvent._id}_${i + 1}@test.com`,
+            password: 'password123',
+            role: 'user'
+          });
           await EventRegistration.create({
             event: savedEvent._id,
-            user: dummyUser._id,
+            user: attendee._id,
             status: 'approved',
             paymentStatus: 'not_required'
           });
@@ -1166,16 +1971,25 @@ async function seedDatabase() {
     });
 
     console.log('\n🚀 All events are now ready for testing on http://localhost:5173/events!');
-    await mongoose.connection.close();
-    process.exit(0);
+    
+    if (shouldExit) {
+      await mongoose.connection.close();
+      process.exit(0);
+    }
 
   } catch (error) {
     console.error('\n❌ Seeding failed with error:', error.message);
-    if (mongoose.connection.readyState !== 0) {
-      await mongoose.connection.close();
+    if (shouldExit) {
+      if (mongoose.connection.readyState !== 0) {
+        await mongoose.connection.close();
+      }
+      process.exit(1);
     }
-    process.exit(1);
   }
 }
 
-seedDatabase();
+if (require.main === module) {
+  seedDatabase(true);
+}
+
+module.exports = seedDatabase;
