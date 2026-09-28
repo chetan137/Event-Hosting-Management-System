@@ -6,12 +6,16 @@ const {
   registerForEvent,
   getMyEvents,
   cancelRegistration,
-  getEventAttendees
+  getEventAttendees,
+  getCategories,
+  enhanceSearchQuery
 } = require('../controllers/eventRegistrationController');
 const { protect } = require('../middleware/authMiddleware');
 
 // Public routes
 router.get('/', getPublicEvents);
+router.get('/categories', getCategories);
+router.get('/search/semantic', enhanceSearchQuery);
 
 // Protected routes (require user login) - must come before /:id
 router.get('/user/my-events', protect, getMyEvents);

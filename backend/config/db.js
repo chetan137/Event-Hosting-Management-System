@@ -2,6 +2,13 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
+    if (!process.env.MONGO_URI) {
+      console.error('\n❌ ERROR: MONGO_URI is not defined in your .env file!');
+      console.error('👉 Please create a .env file with your MongoDB connection string:');
+      console.error('   MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/event_management\n');
+      process.exit(1);
+    }
+
     // Suppress the strictQuery deprecation warning
     mongoose.set('strictQuery', false);
     

@@ -25,6 +25,7 @@ const CreateEvent = () => {
   const [eventData, setEventData] = useState({
     eventName: '',
     description: '',
+    category: 'Technology',
     coverImage: '',
     calendarType: 'personal',
     visibility: 'public',
@@ -226,7 +227,31 @@ const CreateEvent = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label className="block text-gray-400 text-sm font-medium mb-3 uppercase tracking-widest">Category</label>
+                    <div className="relative">
+                      <select
+                        name="category"
+                        value={eventData.category || 'Technology'}
+                        onChange={handleChange}
+                        className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white focus:border-cyan-400 transition-all outline-none appearance-none font-medium"
+                      >
+                        <option value="Technology">💻 Technology</option>
+                        <option value="Workshop">🛠️ Workshop</option>
+                        <option value="Business">💼 Business</option>
+                        <option value="Entertainment">🎭 Entertainment</option>
+                        <option value="Music">🎵 Music</option>
+                        <option value="Sports & Fitness">🏃 Sports & Fitness</option>
+                        <option value="Networking">🤝 Networking</option>
+                        <option value="Education">📚 Education</option>
+                        <option value="Design">🎨 Design</option>
+                        <option value="Gaming">🎮 Gaming</option>
+                        <option value="Other">🌟 Other</option>
+                      </select>
+                      <Tag size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                    </div>
+                  </div>
                   <div>
                     <label className="block text-gray-400 text-sm font-medium mb-3 uppercase tracking-widest">Calendar Type</label>
                     <div className="relative">

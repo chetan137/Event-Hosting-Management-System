@@ -4,7 +4,9 @@ const connectDB = require('./config/db');
 const adminRoutes = require('./routes/adminRoutes');
 const { initEventReminderService } = require('./services/eventReminderService');
 
-dotenv.config();
+const path = require('path');
+dotenv.config({ path: path.join(__dirname, '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 connectDB();
 

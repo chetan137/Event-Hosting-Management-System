@@ -24,6 +24,23 @@ const eventSchema = new mongoose.Schema({
     enum: ['public', 'private'],
     default: 'public'
   },
+  category: {
+    type: String,
+    enum: [
+      'Technology',
+      'Workshop',
+      'Business',
+      'Entertainment',
+      'Music',
+      'Sports & Fitness',
+      'Networking',
+      'Education',
+      'Design',
+      'Gaming',
+      'Other'
+    ],
+    default: 'Technology'
+  },
   startDateTime: {
     type: Date,
     required: [true, 'Start date and time are required']
