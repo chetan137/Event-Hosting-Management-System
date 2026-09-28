@@ -1,17 +1,17 @@
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+
 const express = require('express');
-const dotenv = require('dotenv');
+const cors = require('cors');
 const connectDB = require('./config/db');
 const adminRoutes = require('./routes/adminRoutes');
 const { initEventReminderService } = require('./services/eventReminderService');
-
-dotenv.config();
 
 connectDB();
 
 const app = express();
 
-const cors = require('cors');
-
+app.set('trust proxy', 1);
 app.use(express.json());
 
 const allowedOrigins = [
@@ -36,6 +36,8 @@ app.use(cors({
   credentials: true
 }));
 
+// AI routes must be mounted BEFORE '/api/admin' so adminRoutes can't swallow them
+app.use('/api/admin/event-ai', require('./routes/adminEventAiRoutes'));
 app.use('/api/admin', adminRoutes);
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/events', require('./routes/eventRoutes'));
