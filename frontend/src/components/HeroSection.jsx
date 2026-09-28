@@ -2,6 +2,8 @@ import React from 'react';
 import { Play, Speaker, Box, Smartphone, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+const SHOWCASE_PATH = '/showcase';
+
 const HeroSection = () => {
   const videoRef = React.useRef(null);
   const navigate = useNavigate();
@@ -65,7 +67,10 @@ const HeroSection = () => {
                 <ExternalLink size={20} />
               </span>
             </button>
-            <button className="text-gray-300 font-medium hover:text-white transition-colors border-b border-gray-600 pb-1">
+            <button 
+              onClick={() => navigate(SHOWCASE_PATH)}
+              className="text-gray-300 font-medium hover:text-white hover:border-white cursor-pointer transition-colors border-b border-gray-600 pb-1"
+            >
               View Showcase
             </button>
           </div>

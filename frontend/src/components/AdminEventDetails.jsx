@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Users, QrCode, ClipboardList, CheckCircle, XCircle,
-  Trash2, UserPlus, Search, Filter, Loader, Mail
+  Trash2, UserPlus, Search, Filter, Loader, Mail, TrendingUp
 } from 'lucide-react';
 import API from '../services/api';
 import QRScanner from './QRScanner';
@@ -142,6 +142,12 @@ const AdminEventDetails = () => {
               }`}
             >
               <ClipboardList size={16} /> Attendance
+            </button>
+            <button
+              onClick={() => navigate(`/admin/analytics/${eventId}/forecast`)}
+              className="px-4 py-2 rounded-md text-sm font-semibold transition-all flex items-center gap-2 text-gray-400 hover:text-white"
+            >
+              <TrendingUp size={16} /> Forecast
             </button>
           </div>
         </div>
