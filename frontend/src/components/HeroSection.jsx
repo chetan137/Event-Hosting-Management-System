@@ -68,7 +68,11 @@ const HeroSection = () => {
               </span>
             </button>
             <button 
-              onClick={() => navigate(SHOWCASE_PATH)}
+              onClick={() => {
+                const el = document.getElementById('showcase');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                else window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               className="text-gray-300 font-medium hover:text-white hover:border-white cursor-pointer transition-colors border-b border-gray-600 pb-1"
             >
               View Showcase
