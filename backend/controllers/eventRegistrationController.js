@@ -118,9 +118,53 @@ const sendEventEmail = async (to, subject, htmlContent) => {
 // @route   GET /api/events
 // @access  Public
 const getPublicEvents = asyncHandler(async (req, res) => {
-  const { status } = req.query;
+  const { status, search, locationType, ticketType } = req.query;
 
-  const events = await Event.find({ visibility: 'public' }).sort({ startDateTime: 1 });
+  const query = { visibility: 'public' };
+
+  if (locationType) {
+    query.locationType = locationType;
+  }
+
+  if (ticketType) {
+    query.ticketType = ticketType;
+  }
+
+  if (search && search.trim()) {
+    const rawSearch = search.trim();
+    const searchTerms = rawSearch.split(/\s+/).filter(Boolean);
+    
+    // Check for semantic keywords
+    const lower = rawSearch.toLowerCase();
+    const orConditions = [
+      { eventName: { $regex: rawSearch, $options: 'i' } },
+      { description: { $regex: rawSearch, $options: 'i' } },
+      { locationValue: { $regex: rawSearch, $options: 'i' } },
+      { theme: { $regex: rawSearch, $options: 'i' } }
+    ];
+
+    // Semantic tokens
+    searchTerms.forEach(term => {
+      orConditions.push(
+        { eventName: { $regex: term, $options: 'i' } },
+        { description: { $regex: term, $options: 'i' } }
+      );
+    });
+
+    if (lower.includes('free')) {
+      orConditions.push({ ticketType: 'free' });
+    }
+    if (lower.includes('online') || lower.includes('virtual') || lower.includes('zoom') || lower.includes('remote')) {
+      orConditions.push({ locationType: 'online' });
+    }
+    if (lower.includes('in-person') || lower.includes('offline') || lower.includes('venue')) {
+      orConditions.push({ locationType: 'offline' });
+    }
+
+    query.$or = orConditions;
+  }
+
+  const events = await Event.find(query).sort({ startDateTime: 1 });
 
   // Add status and registration count to each event
   const eventsWithStatus = await Promise.all(events.map(async (event) => {

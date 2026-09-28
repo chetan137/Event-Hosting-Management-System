@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const adminRoutes = require('./routes/adminRoutes');
 const { initEventReminderService } = require('./services/eventReminderService');
+const { initPingerService } = require('./services/pingerService');
 
 dotenv.config();
 
@@ -44,6 +45,15 @@ app.use('/api/attendance', require('./routes/attendanceRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/test', require('./routes/testRoutes')); // Test endpoints
 
+// Health check endpoint for uptime monitors and keep-warm pingers (BUG-01)
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
@@ -65,4 +75,7 @@ app.listen(PORT, '0.0.0.0', () => {
 
   // Initialize event reminder service
   initEventReminderService();
+
+  // Initialize keep-warm pinger service (BUG-01)
+  initPingerService();
 });
