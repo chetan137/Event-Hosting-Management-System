@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import API from '../services/api';
 import { motion } from 'framer-motion';
+import AutoGenerateModal from './AutoGenerateModal';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Calendar,
@@ -43,6 +44,37 @@ const CreateEvent = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false);
+
+  // AI output is HTML; the description field is a plain textarea
+  const htmlToPlainText = (html) => {
+    const doc = new DOMParser().parseFromString(html || '', 'text/html');
+    doc.querySelectorAll('li').forEach((li) => li.prepend('• '));
+    doc.querySelectorAll('p, li, h1, h2, h3, br').forEach((el) => el.append('\n'));
+    return doc.body.textContent.replace(/\n{3,}/g, '\n\n').trim();
+  };
+
+  const agendaToText = (agenda) => {
+    const multiDay = agenda.some((i) => (i.day || 1) > 1);
+    return agenda
+      .map((i) => {
+        const day = multiDay ? `Day ${i.day || 1} · ` : '';
+        const speaker = i.speaker ? ` (${i.speaker})` : '';
+        return `${day}${i.startTime}–${i.endTime}  ${i.title}${speaker}`;
+      })
+      .join('\n');
+  };
+
+  const handleAiAccept = ({ title, descriptionHtml, agenda }) => {
+    const text = htmlToPlainText(descriptionHtml);
+    const agendaText = agenda?.length ? `\n\nAgenda\n${agendaToText(agenda)}` : '';
+    setEventData((prev) => ({
+      ...prev,
+      eventName: title || prev.eventName,
+      description: `${text}${agendaText}`,
+    }));
+    window.showToast?.('AI content added. Review it before publishing.', 'success', 2500);
+  };
 
   useEffect(() => {
     if (isEditMode) {
@@ -202,6 +234,16 @@ const CreateEvent = () => {
               </div>
 
               <div className="space-y-6">
+                {!isEditMode && (
+                  <button
+                    type="button"
+                    onClick={() => setAiOpen(true)}
+                    className="w-full py-3 rounded-2xl bg-gradient-to-r from-cyan-400/20 to-purple-600/20 border border-cyan-400/30 text-cyan-300 font-bold hover:from-cyan-400/30 hover:to-purple-600/30 transition-all"
+                  >
+                    ✨ Auto-Generate with AI
+                  </button>
+                )}
+
                 <div>
                   <label className="block text-gray-400 text-sm font-medium mb-3 uppercase tracking-widest">Event Name</label>
                   <input
@@ -504,6 +546,12 @@ const CreateEvent = () => {
           </div>
         </form>
       </div>
+
+      <AutoGenerateModal
+        open={aiOpen}
+        onClose={() => setAiOpen(false)}
+        onAccept={handleAiAccept}
+      />
 
       <style jsx="true">{`
         .custom-datetime-input::-webkit-calendar-picker-indicator {
