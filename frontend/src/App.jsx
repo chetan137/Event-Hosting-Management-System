@@ -15,6 +15,8 @@ import AdminScannerPage from './components/AdminScannerPage';
 import AdminEventDetails from './components/AdminEventDetails';
 import CompletedEventsAnalytics from './components/CompletedEventsAnalytics';
 import EventAnalyticsDashboard from './components/EventAnalyticsDashboard';
+import ShowcaseGallery from './components/ShowcaseGallery';
+import VerifyCertificate from './components/VerifyCertificate';
 import Footer from './components/Footer';
 import Toast from './components/Toast';
 import './styles/mobile-responsive.css';
@@ -41,6 +43,9 @@ function App() {
           <Route path="/admin/scanner/:eventId" element={<AdminScannerPage />} />
           <Route path="/admin/analytics" element={<CompletedEventsAnalytics />} />
           <Route path="/admin/analytics/:eventId" element={<EventAnalyticsDashboard />} />
+          <Route path="/showcase" element={<ShowcaseGallery />} />
+          <Route path="/verify" element={<VerifyCertificate />} />
+          <Route path="/verify-certificate/:certificateNumber" element={<VerifyCertificate />} />
         </Routes>
         <Footer />
       </div>

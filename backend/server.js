@@ -42,6 +42,8 @@ app.use('/api/events', require('./routes/eventRoutes'));
 app.use('/api/qr', require('./routes/qrRoutes'));
 app.use('/api/attendance', require('./routes/attendanceRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
+app.use('/api/certificates', require('./routes/certificateRoutes'));
+app.use('/api/gallery', require('./routes/certificateRoutes')); // Public showcase gallery alias
 app.use('/api/test', require('./routes/testRoutes')); // Test endpoints
 
 app.get('/', (req, res) => {

@@ -32,10 +32,10 @@ function Login() {
 
       // Redirect based on role
       setTimeout(() => {
-        if(data.role === 'admin') {
-            navigate('/admin');
+        if (data.role === 'admin') {
+          navigate('/admin');
         } else {
-            navigate('/'); // or user dashboard
+          navigate('/events');
         }
       }, 500);
 

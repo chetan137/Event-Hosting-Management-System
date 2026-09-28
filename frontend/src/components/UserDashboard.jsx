@@ -1,21 +1,67 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, Users, Clock, CheckCircle, XCircle, Loader, QrCode, MessageSquare } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, CheckCircle, XCircle, Loader, QrCode, MessageSquare, Award } from 'lucide-react';
 import API from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import QRCodeDisplay from './QRCodeDisplay';
 import FeedbackForm from './FeedbackForm';
+import CertificateModal from './CertificateModal';
 
 const UserDashboard = () => {
   const [myEvents, setMyEvents] = useState([]);
   const [attendance, setAttendance] = useState({});
+  const [certificates, setCertificates] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showFeedback, setShowFeedback] = useState(null);
+  const [selectedCertForModal, setSelectedCertForModal] = useState(null);
+  const [generatingCertId, setGeneratingCertId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchMyEvents();
+    fetchCertificates();
   }, []);
+
+  const fetchCertificates = async () => {
+    try {
+      const { data } = await API.get('/api/certificates/my-certificates');
+      if (data.success && data.certificates) {
+        const certMap = {};
+        data.certificates.forEach((c) => {
+          const evtId = c.event?._id || c.event;
+          if (evtId) certMap[evtId] = c;
+        });
+        setCertificates(certMap);
+      }
+    } catch (error) {
+      console.error('Error fetching certificates:', error);
+    }
+  };
+
+  const handleClaimCertificate = async (event) => {
+    if (certificates[event._id]) {
+      setSelectedCertForModal(certificates[event._id]);
+      return;
+    }
+
+    try {
+      setGeneratingCertId(event._id);
+      const { data } = await API.post('/api/certificates/generate', {
+        eventId: event._id,
+        certificateType: 'completion',
+        isPublic: true
+      });
+
+      if (data.certificate) {
+        setCertificates(prev => ({ ...prev, [event._id]: data.certificate }));
+        setSelectedCertForModal(data.certificate);
+      }
+    } catch (error) {
+      alert(error.response?.data?.message || 'Could not generate certificate yet.');
+    } finally {
+      setGeneratingCertId(null);
+    }
+  };
 
   const fetchMyEvents = async () => {
     try {
@@ -212,6 +258,23 @@ const UserDashboard = () => {
                             ✅ Feedback submitted - Thank you!
                           </div>
                         )}
+
+                        {(hasAttended || event.eventStatus === 'completed') && (
+                          <button
+                            onClick={() => handleClaimCertificate(event)}
+                            disabled={generatingCertId === event._id}
+                            className="w-full py-2 bg-gradient-to-r from-amber-500/20 via-cyan-500/20 to-blue-500/20 hover:from-amber-500/30 hover:to-cyan-500/30 border border-cyan-500/40 text-cyan-300 font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-sm"
+                          >
+                            <Award className="w-4 h-4 text-amber-400" />
+                            <span>
+                              {generatingCertId === event._id
+                                ? 'Generating...'
+                                : certificates[event._id]
+                                ? '🎓 View Verified Certificate'
+                                : '📜 Claim Certificate'}
+                            </span>
+                          </button>
+                        )}
                       </div>
                     )}
 
@@ -245,6 +308,21 @@ const UserDashboard = () => {
           </div>
         )}
       </div>
+
+      {/* Verified Certificate Modal */}
+      {selectedCertForModal && (
+        <CertificateModal
+          certificate={selectedCertForModal}
+          onClose={() => setSelectedCertForModal(null)}
+          onUpdate={(updated) => {
+            const evtId = updated.event?._id || updated.event;
+            if (evtId) {
+              setCertificates(prev => ({ ...prev, [evtId]: updated }));
+            }
+            setSelectedCertForModal(updated);
+          }}
+        />
+      )}
     </div>
   );
 };

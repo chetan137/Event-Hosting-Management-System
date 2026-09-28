@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, Calendar, LayoutDashboard, UserCircle, LogOut, PlusCircle } from 'lucide-react';
+import { Menu, X, Home, Calendar, LayoutDashboard, UserCircle, LogOut, PlusCircle, Award, ShieldCheck } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
@@ -58,6 +58,14 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/" className="text-gray-400 hover:text-white transition-colors font-medium">Home</Link>
             <Link to="/events" className="text-gray-400 hover:text-white transition-colors font-medium">Events</Link>
+            <Link to="/showcase" className="text-gray-400 hover:text-white transition-colors font-medium flex items-center gap-1.5">
+              <Award size={16} className="text-cyan-400" />
+              <span>Showcase</span>
+            </Link>
+            <Link to="/verify" className="text-gray-400 hover:text-white transition-colors font-medium flex items-center gap-1.5">
+              <ShieldCheck size={16} className="text-green-400" />
+              <span>Verify</span>
+            </Link>
             {user && user.role !== 'admin' && (
               <Link to="/dashboard" className="text-gray-400 hover:text-white transition-colors font-medium">My Events</Link>
             )}
@@ -185,6 +193,22 @@ const Navbar = () => {
                   >
                     <Calendar size={20} />
                     <span className="font-medium">Events</span>
+                  </Link>
+
+                  <Link
+                    to="/showcase"
+                    className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl transition-all"
+                  >
+                    <Award size={20} className="text-cyan-400" />
+                    <span className="font-medium">Showcase Gallery</span>
+                  </Link>
+
+                  <Link
+                    to="/verify"
+                    className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl transition-all"
+                  >
+                    <ShieldCheck size={20} className="text-green-400" />
+                    <span className="font-medium">Verify Credential</span>
                   </Link>
 
                   {user && user.role !== 'admin' && (
