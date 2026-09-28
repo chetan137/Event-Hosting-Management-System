@@ -58,9 +58,17 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/" className="text-gray-400 hover:text-white transition-colors font-medium">Home</Link>
             <Link to="/events" className="text-gray-400 hover:text-white transition-colors font-medium">Events</Link>
-            <Link to="/showcase" className="text-gray-400 hover:text-white transition-colors font-medium flex items-center gap-1.5">
+            <Link
+              to="/showcase"
+              className={`flex items-center gap-1.5 transition-colors font-medium ${
+                location.pathname === '/showcase' ? 'text-cyan-400 font-semibold' : 'text-gray-400 hover:text-white'
+              }`}
+            >
               <Award size={16} className="text-cyan-400" />
               <span>Showcase</span>
+              <span className="text-[10px] bg-gradient-to-r from-pink-500 to-purple-500 text-white px-1.5 py-0.5 rounded-full font-bold">
+                Credentials
+              </span>
             </Link>
             <Link to="/verify" className="text-gray-400 hover:text-white transition-colors font-medium flex items-center gap-1.5">
               <ShieldCheck size={16} className="text-green-400" />

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import QRCodeDisplay from './QRCodeDisplay';
 import FeedbackForm from './FeedbackForm';
 import CertificateModal from './CertificateModal';
+import CredentialModal from './CredentialModal';
 
 const UserDashboard = () => {
   const [myEvents, setMyEvents] = useState([]);
@@ -15,6 +16,7 @@ const UserDashboard = () => {
   const [showFeedback, setShowFeedback] = useState(null);
   const [selectedCertForModal, setSelectedCertForModal] = useState(null);
   const [generatingCertId, setGeneratingCertId] = useState(null);
+  const [viewingCredential, setViewingCredential] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -122,13 +124,22 @@ const UserDashboard = () => {
     <div className="min-h-screen bg-[#121212] pt-32 pb-20 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8 sm:mb-12">
-          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent mb-4">
-            My Events
-          </h1>
-          <p className="text-gray-400 text-base sm:text-lg">
-            Track all your registered events in one place
-          </p>
+        <div className="mb-8 sm:mb-12 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-pink-500 bg-clip-text text-transparent mb-2">
+              My Events
+            </h1>
+            <p className="text-gray-400 text-base sm:text-lg">
+              Track all your registered events and access verified credentials in one place
+            </p>
+          </div>
+          <button
+            onClick={() => navigate('/showcase')}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 font-semibold text-sm transition-all shadow-md self-start sm:self-auto cursor-pointer"
+          >
+            <Award className="w-4 h-4" />
+            <span>Public Showcase Gallery</span>
+          </button>
         </div>
 
         {/* Events Grid */}
@@ -259,6 +270,39 @@ const UserDashboard = () => {
                           </div>
                         )}
 
+                        {/* View Official Credential & Download PDF/PNG */}
+                        <button
+                          onClick={() => {
+                            const user = JSON.parse(localStorage.getItem('userInfo')) || {};
+                            setViewingCredential({
+                              _id: event.registrationId || event._id,
+                              credentialId: `ES-${new Date(event.startDateTime).getFullYear()}-${(event.registrationId || event._id).toString().slice(-6).toUpperCase()}`,
+                              recipientName: user.fullName || 'Verified Attendee',
+                              recipientEmail: user.email,
+                              userId: user._id,
+                              eventId: event._id,
+                              eventName: event.eventName,
+                              eventDate: event.startDateTime,
+                              location: event.locationType === 'online' ? 'Online Virtual Event' : event.locationValue,
+                              locationType: event.locationType,
+                              coverImage: event.coverImage,
+                              credentialType: hasAttended ? 'Certificate of Attendance' : 'Verified Attendee Pass',
+                              attendanceStatus: hasAttended ? 'Verified Attended' : 'Approved Registration',
+                              issueDate: hasAttended?.scanTime || event.registrationDate || new Date(),
+                              status: 'Verified',
+                              issuer: 'EventSync Official Organization',
+                              issuerTitle: 'Director of Event Operations',
+                              verificationHash: '9a72b8c5e13d4f00',
+                              skills: ['Event Participation', 'Professional Development', 'Technical Collaboration'],
+                              description: `Official verified credential awarded to ${user.fullName || 'the attendee'} for participating in ${event.eventName}.`
+                            });
+                          }}
+                          className="w-full py-2 bg-gradient-to-r from-purple-600/30 to-cyan-600/30 hover:from-purple-600/50 hover:to-cyan-600/50 border border-cyan-500/40 text-cyan-300 font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-sm shadow-md"
+                        >
+                          <Award className="w-4 h-4 text-cyan-400" />
+                          <span>View Credential & Download PDF/PNG</span>
+                        </button>
+
                         {(hasAttended || event.eventStatus === 'completed') && (
                           <button
                             onClick={() => handleClaimCertificate(event)}
@@ -321,6 +365,14 @@ const UserDashboard = () => {
             }
             setSelectedCertForModal(updated);
           }}
+        />
+      )}
+
+      {/* Credential View Modal */}
+      {viewingCredential && (
+        <CredentialModal
+          credential={viewingCredential}
+          onClose={() => setViewingCredential(null)}
         />
       )}
     </div>

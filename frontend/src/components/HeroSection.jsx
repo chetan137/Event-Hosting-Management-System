@@ -65,8 +65,12 @@ const HeroSection = () => {
                 <ExternalLink size={20} />
               </span>
             </button>
-            <button className="text-gray-300 font-medium hover:text-white transition-colors border-b border-gray-600 pb-1">
-              View Showcase
+            <button
+              onClick={() => navigate('/showcase')}
+              className="text-gray-300 font-medium hover:text-cyan-400 transition-colors border-b border-gray-600 hover:border-cyan-400 pb-1 cursor-pointer flex items-center gap-1.5"
+            >
+              <span>View Showcase</span>
+              <span className="text-xs bg-cyan-500/20 text-cyan-400 px-1.5 py-0.5 rounded font-mono">Ledger</span>
             </button>
           </div>
         </div>

@@ -44,6 +44,8 @@ function App() {
           <Route path="/admin/analytics" element={<CompletedEventsAnalytics />} />
           <Route path="/admin/analytics/:eventId" element={<EventAnalyticsDashboard />} />
           <Route path="/showcase" element={<ShowcaseGallery />} />
+          <Route path="/gallery" element={<ShowcaseGallery />} />
+          <Route path="/credentials/:id" element={<ShowcaseGallery />} />
           <Route path="/verify" element={<VerifyCertificate />} />
           <Route path="/verify-certificate/:certificateNumber" element={<VerifyCertificate />} />
         </Routes>

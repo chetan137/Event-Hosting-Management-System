@@ -6,12 +6,16 @@ const {
   registerForEvent,
   getMyEvents,
   cancelRegistration,
-  getEventAttendees
+  getEventAttendees,
+  getShowcaseCredentials,
+  getCredentialById
 } = require('../controllers/eventRegistrationController');
 const { protect } = require('../middleware/authMiddleware');
 
-// Public routes
+// Public showcase & credential routes - must come before /:id
 router.get('/', getPublicEvents);
+router.get('/public/showcase', getShowcaseCredentials);
+router.get('/credentials/:id', getCredentialById);
 
 // Protected routes (require user login) - must come before /:id
 router.get('/user/my-events', protect, getMyEvents);
