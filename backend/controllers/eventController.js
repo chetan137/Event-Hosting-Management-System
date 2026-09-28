@@ -11,6 +11,7 @@ const createEvent = asyncHandler(async (req, res) => {
     coverImage,
     calendarType,
     visibility,
+    category,
     startDateTime,
     endDateTime,
     registrationDeadline,
@@ -36,6 +37,7 @@ const createEvent = asyncHandler(async (req, res) => {
     coverImage,
     calendarType,
     visibility,
+    category: category || 'Technology',
     startDateTime,
     endDateTime,
     registrationDeadline,
@@ -121,6 +123,7 @@ const updateEvent = asyncHandler(async (req, res) => {
     event.coverImage = req.body.coverImage || event.coverImage;
     event.calendarType = req.body.calendarType || event.calendarType;
     event.visibility = req.body.visibility || event.visibility;
+    event.category = req.body.category || event.category;
     event.startDateTime = req.body.startDateTime || event.startDateTime;
     event.endDateTime = req.body.endDateTime || event.endDateTime;
     event.registrationDeadline = req.body.registrationDeadline !== undefined ? req.body.registrationDeadline : event.registrationDeadline;

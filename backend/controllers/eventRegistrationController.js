@@ -6,6 +6,7 @@ const axios = require('axios');
 const QRCode = require('qrcode');
 const jwt = require('jsonwebtoken');
 const QRCodeModel = require('../models/QRCode');
+const semanticSearchService = require('../services/semanticSearchService');
 
 // Helper function to calculate event status
 const getEventStatus = (event) => {
@@ -116,34 +117,193 @@ const sendEventEmail = async (to, subject, htmlContent) => {
 
 // @desc    Get all public events for users
 // @route   GET /api/events
+// @desc    Get all public events for users with multi-criteria filtering & semantic search
+// @route   GET /api/events
 // @access  Public
 const getPublicEvents = asyncHandler(async (req, res) => {
-  const { status } = req.query;
+  const {
+    status,
+    category,
+    startDate,
+    endDate,
+    seatAvailability,
+    availability,
+    search,
+    q,
+    detailed
+  } = req.query;
 
-  const events = await Event.find({ visibility: 'public' }).sort({ startDateTime: 1 });
+  const searchQuery = (search || q || '').trim();
+  const seatFilter = seatAvailability || availability || 'all';
 
-  // Add status and registration count to each event
-  const eventsWithStatus = await Promise.all(events.map(async (event) => {
+  // Base Mongo query for public events
+  let dbQuery = { visibility: 'public' };
+
+  // Explicit category filter (if not 'all')
+  if (category && category !== 'all') {
+    dbQuery.category = { $regex: new RegExp(`^${category}$`, 'i') };
+  }
+
+  // Date range filter
+  if (startDate || endDate) {
+    dbQuery.$and = dbQuery.$and || [];
+    if (startDate) {
+      const start = new Date(startDate);
+      // Event has not ended before the start date
+      dbQuery.$and.push({ endDateTime: { $gte: start } });
+    }
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      // Event starts before or on the end date
+      dbQuery.$and.push({ startDateTime: { $lte: end } });
+    }
+  }
+
+  // Fetch from DB
+  const events = await Event.find(dbQuery).sort({ startDateTime: 1 });
+
+  // Add status, registration count, and spots left to each event
+  const eventsWithMetadata = await Promise.all(events.map(async (event) => {
     const eventStatus = getEventStatus(event);
     const registrationCount = await EventRegistration.countDocuments({
       event: event._id,
       status: { $in: ['approved', 'pending'] }
     });
 
+    const spotsLeft = event.capacity ? Math.max(0, event.capacity - registrationCount) : null;
+    const isSoldOut = event.capacity !== null && spotsLeft === 0;
+
     return {
       ...event.toObject(),
       status: eventStatus,
       registeredUsers: registrationCount,
-      spotsLeft: event.capacity ? event.capacity - registrationCount : null
+      spotsLeft,
+      isSoldOut,
+      category: event.category || 'Technology'
     };
   }));
 
-  // Filter by status if provided
-  const filteredEvents = status
-    ? eventsWithStatus.filter(e => e.status === status)
-    : eventsWithStatus;
+  // Filter 1: Status filter
+  let filtered = eventsWithMetadata;
+  if (status && status !== 'all') {
+    filtered = filtered.filter(e => e.status === status);
+  }
 
-  res.json(filteredEvents);
+  // Filter 2: Seat availability filter
+  if (seatFilter === 'available' || seatFilter === 'open') {
+    filtered = filtered.filter(e => e.spotsLeft === null || e.spotsLeft > 0);
+  } else if (seatFilter === 'sold_out' || seatFilter === 'full') {
+    filtered = filtered.filter(e => e.isSoldOut === true);
+  }
+
+  // Filter 3: Smart AI & Fuzzy Semantic Query
+  let semanticMeta = null;
+  if (searchQuery) {
+    semanticMeta = await semanticSearchService.enhanceQuery(searchQuery);
+    const queryLower = searchQuery.toLowerCase();
+    const enhancedKeywords = (semanticMeta.enhancedKeywords || []).map(k => k.toLowerCase());
+    const inferredCategories = (semanticMeta.inferredCategories || []).map(c => c.toLowerCase());
+
+    // Score and filter each event
+    const scoredEvents = filtered.map(event => {
+      let score = 0;
+      const matchedReasons = [];
+
+      const nameLower = (event.eventName || '').toLowerCase();
+      const descLower = (event.description || '').toLowerCase();
+      const catLower = (event.category || '').toLowerCase();
+      const locLower = (event.locationValue || '').toLowerCase();
+
+      // Exact title match
+      if (nameLower === queryLower) {
+        score += 20;
+        matchedReasons.push('Exact title match');
+      } else if (nameLower.includes(queryLower)) {
+        score += 10;
+        matchedReasons.push('Title contains query');
+      }
+
+      // Description match
+      if (descLower.includes(queryLower)) {
+        score += 5;
+        matchedReasons.push('Description matches query');
+      }
+
+      // Location match
+      if (locLower.includes(queryLower)) {
+        score += 4;
+        matchedReasons.push('Location matches query');
+      }
+
+      // Semantic Category Match
+      if (inferredCategories.includes(catLower)) {
+        score += 8;
+        matchedReasons.push(`Category matches intent (${event.category})`);
+      }
+
+      // Semantic Keyword Matches
+      enhancedKeywords.forEach(keyword => {
+        if (!keyword || keyword.length < 2) return;
+        if (nameLower.includes(keyword)) {
+          score += 4;
+          matchedReasons.push(`Title matches semantic term '${keyword}'`);
+        } else if (descLower.includes(keyword)) {
+          score += 2;
+          matchedReasons.push(`Description matches semantic term '${keyword}'`);
+        }
+      });
+
+      return {
+        ...event,
+        relevanceScore: score,
+        matchedReasons: Array.from(new Set(matchedReasons)).slice(0, 3)
+      };
+    });
+
+    // Keep events that scored > 0 and sort by relevance descending
+    filtered = scoredEvents
+      .filter(e => e.relevanceScore > 0)
+      .sort((a, b) => b.relevanceScore - a.relevanceScore);
+  }
+
+  // Detailed response format if requested
+  if (detailed === 'true') {
+    return res.json({
+      events: filtered,
+      total: filtered.length,
+      appliedFilters: {
+        category: category || 'all',
+        startDate: startDate || null,
+        endDate: endDate || null,
+        seatAvailability: seatFilter,
+        status: status || 'all',
+        search: searchQuery || null
+      },
+      semanticMeta,
+      categories: semanticSearchService.getCategories()
+    });
+  }
+
+  // Default array response for backward compatibility
+  res.json(filtered);
+});
+
+// @desc    Get all available categories with icons
+// @route   GET /api/events/categories
+// @access  Public
+const getCategories = asyncHandler(async (req, res) => {
+  const categories = semanticSearchService.getCategories();
+  res.json(categories);
+});
+
+// @desc    Enhance search query via AI & Fuzzy Semantic Engine
+// @route   GET /api/events/search/semantic
+// @access  Public
+const enhanceSearchQuery = asyncHandler(async (req, res) => {
+  const query = req.query.q || req.query.query || '';
+  const result = await semanticSearchService.enhanceQuery(query);
+  res.json(result);
 });
 
 // @desc    Get event details by ID
@@ -391,5 +551,7 @@ module.exports = {
   registerForEvent,
   getMyEvents,
   cancelRegistration,
-  getEventAttendees
+  getEventAttendees,
+  getCategories,
+  enhanceSearchQuery
 };
